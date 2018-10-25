@@ -69,14 +69,14 @@ function fun(src,event)
         
         
     elseif event.Key == 'z'
-        if (Angle1-10)>270
+        if (Angle1-10)>290 || (Angle1-10)<60
             Angle2=0
             Angle1=wrapTo360(Angle1-10)
         end
         CASK_SendRequest('Angle1', Angle1, 'Angle2', Angle2);
         
     elseif event.Key == 'c'
-        if (Angle1+10)<90
+        if (Angle1+10)<60 || (Angle1+10)>290
             Angle2=0
             Angle1=wrapTo360(Angle1+10)
         end
