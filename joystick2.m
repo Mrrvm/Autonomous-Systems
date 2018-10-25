@@ -25,6 +25,16 @@ while loopFlag
         break;
     end
     pause(0.5);
+    [a,b,c,d,e,f,g,h,i]=CASK_ReadValues;
+    disp(a)
+    disp(b)
+    disp(c)
+    disp(d)
+    disp(e)
+    disp(f)
+    disp(g)
+    disp(h)
+    disp(i)
 end
 disp('saiu ciclo')
 
