@@ -39,7 +39,7 @@ def Movement(robotPose, controlSignal, noise):
 
     robotPoseUpdated=np.concatenate((dRobotposGF.T,np.array([[alphaEstimate]])), axis=1);
 
-    return [robotPoseUpdated,jrp_r,jrp_n];
+    return [np.squeeze(np.asarray(robotPoseUpdated)),jrp_r,jrp_n];
 
 
 def FromLocalFrameToGlobalFrame(localFrame, pointLF):
