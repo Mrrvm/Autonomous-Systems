@@ -37,8 +37,6 @@ def Movement(robotPose, controlSignal, noise):
     jrp_n=np.concatenate((np.concatenate(
         (dRobotposGF_j[:,0],np.zeros([2,1])),axis=1),np.array([[0,1]])),axis=0);
 
-    print(dRobotposGF.shape)
-    print(np.array([[alphaEstimate]]).shape)
     robotPoseUpdated=np.concatenate((dRobotposGF.T,np.array([[alphaEstimate]])), axis=1);
 
     return [robotPoseUpdated,jrp_r,jrp_n];
