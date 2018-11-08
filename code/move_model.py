@@ -32,11 +32,14 @@ def Movement(robotPose, controlSignal, noise):
             #   (forward assuming movement is always to the front-- REVIEW HERE)
             #   dRobotpos needs to be the increment to position of the robot
 
-    jrp_r=np.matrix([frame_j,[0,0,1]]);
+    jrp_r=np.concatenate((frame_j,np.array([[0,0,1]])),axis=0);
 
-    jrp_n=np.matrix([[dRobotposGF_j[:,0],np.zeros([2,1])],[0,1]]);
+    jrp_n=np.concatenate((np.concatenate(
+        (dRobotposGF_j[:,0],np.zeros([2,1])),axis=1),np.array([[0,1]])),axis=0);
 
-    robotPoseUpdated=np.array([dRobotposGF,alphaEstimate]);
+    print(dRobotposGF.shape)
+    print(np.array([[alphaEstimate]]).shape)
+    robotPoseUpdated=np.concatenate((dRobotposGF.T,np.array([[alphaEstimate]])), axis=1);
 
     return [robotPoseUpdated,jrp_r,jrp_n];
 
