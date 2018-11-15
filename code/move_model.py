@@ -56,7 +56,7 @@ def FromLocalFrameToGlobalFrame(localFrame, pointLF):
     alpha=localFrame[2];
     R=np.matrix([[np.cos(alpha),-np.sin(alpha)],[np.sin(alpha),np.cos(alpha)]])
 
-    pointGF= R*np.transpose(pointLF[np.newaxis]) + localFrame[0:1];
+    pointGF= R*np.transpose(pointLF[np.newaxis]) + np.transpose(localFrame[0:2][np.newaxis]);
 
     #calculate Jacobians
 
