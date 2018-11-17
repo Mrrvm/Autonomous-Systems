@@ -1,6 +1,6 @@
 function [landmark, j_r, j_l] = observation_model(measurement, robotPose)
-%  SENSOR_MEASUREMENT receives the data sent by the sensor and transforms
-%  it into usefull information
+%  Observation Model transforms an observation in the robot frame, to a point
+%  on the global frame
 %
 %  In:
 %      measurement:  point in sensor frame   measurement = [d, alfa, ID]
