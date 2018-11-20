@@ -12,7 +12,7 @@ function [landmark, j_r, j_l] = observation_model(measurement, robotPose)
 
     landmark(3) = measurement(3);
     
-    alfa = robotPose(3) + measurement(3);
+    alfa = robotPose(3) + measurement(2);
     
     landmark(1) = robotPose(1) + measurement(1)*cos(alfa);
     landmark(2) = robotPose(2) + measurement(1)*sin(alfa);
