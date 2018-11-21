@@ -7,11 +7,11 @@ load(data.mat);
 nTimestamps = 100;
 nLandmarksCurrent = 0;
 nLandmarksTotal = 10;
-wheeldistance = 0; % todo
+wheeldistance = 0.21;
 rNoise = zeros(2, 1); % todo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Dynamic Variables 
+%% Dynamic Variables
 stateMean = zeros(3+2*nLandmarksTotal, 1);
 stateCov = zeros(3+2*nLandmarksTotal, 3+2*nLandmarksTotal);
 

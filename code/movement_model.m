@@ -14,39 +14,39 @@ function [robotPoseUpdated,jrp_r,jrp_n] = movement_model(robotPose, controlSigna
 
   displacement=controlSignal+noise;
 
-  d_x = (displacement(2)*cos(robotPose(3)+displacement(1))+ ...
-          displacement(4)*cos(robotPose(3)+displacement(3)))/2;
+  d_x = (displacement(2)*cosd(robotPose(3)+displacement(1))+ ...
+          displacement(4)*cosd(robotPose(3)+displacement(3)))/2;
 
-  d_y = (displacement(2)*sin(robotPose(3)+displacement(1))+ ...
-          displacement(4)*sin(robotPose(3)+displacement(3)))/2;
+  d_y = (displacement(2)*sind(robotPose(3)+displacement(1))+ ...
+          displacement(4)*sind(robotPose(3)+displacement(3)))/2;
 
-  d_alpha = (displacement(2)*sin(displacement(1))- ...
-          displacement(4)*sin(displacement(3)))/wheeldistance;
+  d_alpha = (displacement(2)*sind(displacement(1))- ...
+          displacement(4)*sind(displacement(3)))/wheeldistance;
 
 
   robotPoseUpdated = robotPose + [d_x, d_y, d_alpha];
 
 
   % Calculate Jacobians
-    jrp_r = [ 1, 0, (-displacement(2)*sin(robotPose(3)+displacement(1)) ...
-                -displacement(4)*sin(robotPose(3)+displacement(3)))/2;
-        0, 1, (displacement(2)*cos(robotPose(3)+displacement(1)) ...
-                +displacement(4)*cos(robotPose(3)+displacement(3)))/2;
+    jrp_r = [ 1, 0, (-displacement(2)*sind(robotPose(3)+displacement(1)) ...
+                -displacement(4)*sind(robotPose(3)+displacement(3)))/2;
+        0, 1, (displacement(2)*cosd(robotPose(3)+displacement(1)) ...
+                +displacement(4)*cosd(robotPose(3)+displacement(3)))/2;
         0, 0, 1];
 
     jrp_n=[
-        (-displacement(2)*sin(robotPose(3)+displacement(1)))/2,
-        cos(robotPose(3)+displacement(1))/2,
-        (-displacement(4)*sin(robotPose(3)+displacement(3)))/2,
-        cos(robotPose(3)+displacement(3))/2;
+        (-displacement(2)*sind(robotPose(3)+displacement(1)))/2,
+        cosd(robotPose(3)+displacement(1))/2,
+        (-displacement(4)*sind(robotPose(3)+displacement(3)))/2,
+        cosd(robotPose(3)+displacement(3))/2;
 
-        (displacement(2)*cos(robotPose(3)+displacement(1)))/2,
-        sin(robotPose(3)+displacement(1))/2,
-        (displacement(4)*cos(robotPose(3)+displacement(3)))/2,
-        sin(robotPose(3)+displacement(3))/2;
+        (displacement(2)*cosd(robotPose(3)+displacement(1)))/2,
+        sind(robotPose(3)+displacement(1))/2,
+        (displacement(4)*cosd(robotPose(3)+displacement(3)))/2,
+        sind(robotPose(3)+displacement(3))/2;
 
-        displacement(2)*cos(displacement(1))/wheeldistance,
-        sin(displacement(1))/wheeldistance,
-        -displacement(4)*cos(displacement(3))/wheeldistance,
-        -sin(displacement(3))/wheeldistance
+        displacement(2)*cosd(displacement(1))/wheeldistance,
+        sind(displacement(1))/wheeldistance,
+        -displacement(4)*cosd(displacement(3))/wheeldistance,
+        -sind(displacement(3))/wheeldistance
     ];
