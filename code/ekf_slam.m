@@ -1,14 +1,13 @@
 % Data vector contains
-% [fwAngle, fwVelocity, bwAngle, bwVelocity, landmarkID, landmarkDist, landmarkAngle] * nTimestamps
+% data[fwAngle, fwVelocity, bwAngle, bwVelocity, landmarkID, landmarkDist, landmarkAngle] * nTimestamps
 % fw is front wheels, bw is back wheels
 load(data.mat);
 
 %% Static Variables
 nTimestamps = 100;
-nLandmarksCurrent = 0;
 nLandmarksTotal = 10;
 wheeldistance = 0; % todo
-rNoise = zeros(2, 1); % todo
+rNoise = zeros(4, 1); % todo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Dynamic Variables 
@@ -20,6 +19,7 @@ rNoiseJacobian = zeros(2,2);
 lJacobian = zeros(2,3);
 lNoiseJacobian = zeros(2,2);
 
+nLandmarksCurrent = 0;
 landmark = zeros(3, 1);
 landmarkList = zeros(nLandmarksTotal, 1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -28,7 +28,7 @@ for t = 1:nTimestamps
 
 	%% Prediction step
 	[stateMean(1:3), rJacobian, rNoiseJacobian] = ...
-		movement_model(stateMean(1:3), rControl(1:4, t) , rNoise(:), wheeldistance);
+		movement_model(stateMean(1:3), data(1:4, t) , rNoise(:), wheeldistance);
 	% Calculate new stateCov
 	% todo
 
