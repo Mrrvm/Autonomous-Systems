@@ -5,7 +5,6 @@
 #include <ueye.h>
 #include <wchar.h>
 
-
 #define HEIGHT 1542
 #define WIDTH 2056
 #define BITSPIXEL 32
@@ -17,6 +16,14 @@ void spawn_error(int cameraHandle, std::string where) {
 	is_GetError(cameraHandle, &pErr, &ppcErr);
  	std::cout << "Error at " << where << ppcErr << std::endl;
  	//exit(EXIT_FAILURE);
+}
+
+int detect_aruco() {
+	vector<int> markerIds;
+	vector<vector<Point2f>> markerCorners, rejectedCandidates;
+	Ptr<aruco::DetectorParameters> parameters;
+	Ptr<aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
+	aruco::detectMarkers(inputImage, dictionary, markerCorners, markerIds, parameters, rejectedCandidates);
 }
 
 int main( int argc, char** argv ) {
@@ -80,7 +87,7 @@ int main( int argc, char** argv ) {
 				}
 				i=0;
 				j++;
-				m=0;
+				m=0;	
 			}
 
 			imagePath << PATH << counter << ".bmp";
@@ -89,12 +96,15 @@ int main( int argc, char** argv ) {
 			counter++;
 			imagePath.str("");
 		}
+
+		// Aruco Detection
+
+
 		// Free memory
 		if(is_FreeImageMem(cameraHandle, img, pid) != IS_SUCCESS)
 			spawn_error(cameraHandle, "is_FreeImageMem");
 
 	}
-	
 
 	is_ExitCamera(cameraHandle);
 	return 0;
