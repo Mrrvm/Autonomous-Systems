@@ -20,7 +20,7 @@ lJacobian = zeros(2,3);
 lNoiseJacobian = zeros(2,2);
 
 nLandmarksCurrent = 0;
-landmark = zeros(3, 1);
+landmark = zeros(2, 1);
 landmarkList = zeros(nLandmarksTotal, 1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -33,19 +33,22 @@ for t = 1:nTimestamps
 	% todo
 
 	%% Landmark Observation
-	[landmark, lJacobian, lNoiseJacobian] = observation_model(data(5:7, t), stateMean(1:3));
-	if ismember(landmark(3), landmarkList)
-		%% Correction step
-		location = find(landmark(3), landmarkList);
-		% Calculate new stateMean
-		% Calculate new stateCov
-	else
-		%% Add new landmark
-		landmarkList(nLandmarksCurrent) = landmark(3);
-		stateMean(nLandmarksCurrent*2) = landmark(1);
-		stateMean(nLandmarksCurrent*2+1) = landmark(2);
-		% Calculate new stateCov ??
-		nLandmarksCurrent = nLandmarksCurrent + 1;
-	end
+    nSeen = 0;      %Number of landmarks observed
+	%[range, bearing, ID] = aruco();
+    if nSeen > 0
+        for i = 1:nSeen
+            if ~ismember(ID, landmarkList)
+                %% Add new landmark
+                landmark = new_landmark([range bearing], stateMean(1:3));
+            end
+            %% Correction step
+            location = find(ID, landmarkList);
+            landmarkList(nLandmarksCurrent) = landmark(3);
+            stateMean(nLandmarksCurrent*2) = landmark(1);
+            stateMean(nLandmarksCurrent*2+1) = landmark(2);
+            % Calculate new stateCov ??
+            nLandmarksCurrent = nLandmarksCurrent + 1;
+        end
+    end
 
 end
