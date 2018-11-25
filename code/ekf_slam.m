@@ -54,7 +54,7 @@ for t = 1:nTimestamps
             K = stateCov*(H')*inv(H*stateCov*(H')+Q);
             stateMean = stateMean + K*([range bearing]' - z);
             aux = K*H;
-            stateCov = (eye(size(aux)-aux))*stateCov;
+            stateCov = (eye(size(aux))-aux)*stateCov;
         end
     end
 
