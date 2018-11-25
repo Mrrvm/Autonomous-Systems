@@ -59,7 +59,7 @@ for t = 1:nTimestamps
             K = stateCov*(H')*(H*stateCov*(H')+Q)';
             stateMean = stateMean + K*(landmarkRaw(2:3)' - z);
             aux = K*H;
-            stateCov = (eye(size(aux)-aux))*stateCov;
+            stateCov = (eye(size(aux))-aux)*stateCov;
         end
     end
 end
