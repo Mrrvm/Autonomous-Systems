@@ -18,10 +18,9 @@ rNoise = zeros(4, 1); % todo
 stateMean = zeros(3+2*nLandmarksTotal, 1);
 stateCov = zeros(3+2*nLandmarksTotal, 3+2*nLandmarksTotal);
 
-rJacobian = zeros(3,3);
-rNoiseJacobian = zeros(2,2);
-lJacobian = zeros(2,3);
-lNoiseJacobian = zeros(2,2);
+rJacob = zeros(3,3);
+rQ = zeros(2,2); % Robot noise
+lQ = zeros(2,2); % Landmark noise
 
 nLandmarksSeen = 0
 nLandmarksCurrent = 0;
@@ -33,7 +32,7 @@ landmarkList = zeros(nLandmarksTotal, 1);
 for t = 1:nTimestamps
 
 	%% Prediction step
-	[stateMean(1:3), rJacobian, rNoiseJacobian] = ...
+	[stateMean(1:3), rJacob, rQ] = ...
 		movement_model(stateMean(1:3), data.odom(1:4, t) , rNoise(:), wheeldistance);
 	% Calculate new stateCov
 	% todo
@@ -43,6 +42,7 @@ for t = 1:nTimestamps
     if nLandmarksSeen > 0
         for i = 1:nLandmarksSeen
             landmarkRaw = data.landmark(t).landmarkSeen(i); % Get [landmarkID, landmarkDist, landmarkAngle]
+            lQ = [var(landmarkRaw(2)) 0; 0 var(landmarkRaw(3))];
             if ~ismember(landmarkRaw(1), landmarkList) % If never seen before, add new Landmark
                 landmarkXY = new_landmark(landmarkRaw(2:3), stateMean(1:3)); % Get [landmarkX, landmarkY]
                 landmarkList(nLandmarksCurrent) = landmarkRaw(1); % Add ID to list of landmarks
@@ -56,7 +56,7 @@ for t = 1:nTimestamps
             [z, H] = observation_model(stateMean(1:3), ...
                 [stateMean(3+location*2-1) stateMean(3+location*2)], ...
                 location, nLandmarksCurrent); % Get z = [landmarkDist, landmarkAngle] and jacobian 
-            K = stateCov*(H')*(H*stateCov*(H')+Q)';
+            K = stateCov*(H')*(H*stateCov*(H')+lQ)';
             stateMean = stateMean + K*(landmarkRaw(2:3)' - z);
             aux = K*H;
             stateCov = (eye(size(aux))-aux)*stateCov;
