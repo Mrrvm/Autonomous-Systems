@@ -4,11 +4,17 @@
 #include "defs.hpp"
 #include <ueye.h>
 #include <wchar.h>
+#include <iostream>
+#include <string>
+#include <stdio.h>
+#include <time.h>
+#include <chrono>
 
 #define HEIGHT 1542
 #define WIDTH 2056
 #define BITSPIXEL 32
 #define PATH "/home/imarcher/SA_arucos/"
+
 
 void spawn_error(int cameraHandle, std::string where) {
 	char *ppcErr;
@@ -18,19 +24,36 @@ void spawn_error(int cameraHandle, std::string where) {
  	//exit(EXIT_FAILURE);
 }
 
-int detect_aruco() {
-	vector<int> markerIds;
-	vector<vector<Point2f>> markerCorners, rejectedCandidates;
-	Ptr<aruco::DetectorParameters> parameters;
-	Ptr<aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
-	aruco::detectMarkers(inputImage, dictionary, markerCorners, markerIds, parameters, rejectedCandidates);
+std::string time_in_HH_MM_SS_MMM()
+{
+    using namespace std::chrono;
+
+    // get current time
+    auto now = system_clock::now();
+
+    // get number of milliseconds for the current second
+    // (remainder after division into seconds)
+    auto ms = duration_cast<milliseconds>(now.time_since_epoch()) % 1000;
+
+    // convert to std::time_t in order to convert to std::tm (broken time)
+    auto timer = system_clock::to_time_t(now);
+
+    // convert to broken time
+    std::tm bt = *std::localtime(&timer);
+
+    std::ostringstream oss;
+
+    oss << std::put_time(&bt, "%H:%M:%S"); // HH:MM:SS
+    oss << '.' << std::setfill('0') << std::setw(3) << ms.count();
+
+    return oss.str();
 }
+
 
 int main( int argc, char** argv ) {
 
 	char *img = NULL;
 	int pid;
-	int counter = 0;
 	Mat matImg(HEIGHT, WIDTH, CV_8UC4);
 
 	// Setting 0 allows the first available camera to be initialized or selected
@@ -59,7 +82,6 @@ int main( int argc, char** argv ) {
 	ostringstream imagePath;
 	while(1) {
 
-		getchar();
 		// Allocate memory for image
 		if(is_AllocImageMem(cameraHandle, WIDTH, HEIGHT, BITSPIXEL, &img, &pid) != IS_SUCCESS) 
 			spawn_error(cameraHandle, "is_AllocImageMem");
@@ -90,19 +112,18 @@ int main( int argc, char** argv ) {
 				m=0;	
 			}
 
-			imagePath << PATH << counter << ".bmp";
+
+			imagePath << PATH << time_in_HH_MM_SS_MMM() << ".bmp";
 			imwrite(imagePath.str(), matImg);
 			cout << "Image " << imagePath.str() << " was captured!" << std::endl;
-			counter++;
 			imagePath.str("");
 		}
-
-		// Aruco Detection
-
 
 		// Free memory
 		if(is_FreeImageMem(cameraHandle, img, pid) != IS_SUCCESS)
 			spawn_error(cameraHandle, "is_FreeImageMem");
+
+		sleep(1.5);
 
 	}
 

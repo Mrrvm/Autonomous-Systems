@@ -3,7 +3,7 @@
 % % fw is front wheels, bw is back wheels
 % data.landmark is a vector of structures
 % data.landmark(t) contains {nLandmarksSeen, landmarkSeen[]}
-% data.landmark(t).landmarkSeen(i) = [landmarkID, landmarkDist, landmarkAngle]
+% data.landmark(t).landmarkSeen(i) = [landmarkID, landmarkDist, landmarkAngle] 
 % nLandmarksSeen is the number of landmarks observed in one image
 data = load(data.mat);
 
@@ -11,16 +11,17 @@ data = load(data.mat);
 nTimestamps = data.nTimestamps;
 nLandmarksTotal = data.nLandmarks;
 wheeldistance = 0; % todo
-rNoise = zeros(4, 1);
+rNoise = zeros(4, 1); % todo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Dynamic Variables
+%% Dynamic Variables 
 stateMean = zeros(3+2*nLandmarksTotal, 1);
 stateCov = zeros(3+2*nLandmarksTotal, 3+2*nLandmarksTotal);
 
-rJacob = zeros(3,3);
-rQ = zeros(2,2); % Robot noise
-lQ = zeros(2,2); % Landmark noise
+rJacobian = zeros(3,3);
+rNoiseJacobian = zeros(2,2);
+lJacobian = zeros(2,3);
+lNoiseJacobian = zeros(2,2);
 
 nLandmarksSeen = 0
 nLandmarksCurrent = 0;
@@ -32,17 +33,16 @@ landmarkList = zeros(nLandmarksTotal, 1);
 for t = 1:nTimestamps
 
 	%% Prediction step
-	[stateMean(1:3), rJacob, rQ] = ...
+	[stateMean(1:3), rJacobian, rNoiseJacobian] = ...
 		movement_model(stateMean(1:3), data.odom(1:4, t) , rNoise(:), wheeldistance);
 	% Calculate new stateCov
 	% todo
 
-	%% Correction step
+	%% Correction step    
     nLandmarksSeen = data.landmark(t).nLandmarksSeen;
     if nLandmarksSeen > 0
         for i = 1:nLandmarksSeen
             landmarkRaw = data.landmark(t).landmarkSeen(i); % Get [landmarkID, landmarkDist, landmarkAngle]
-            lQ = [var(landmarkRaw(2)) 0; 0 var(landmarkRaw(3))];
             if ~ismember(landmarkRaw(1), landmarkList) % If never seen before, add new Landmark
                 landmarkXY = new_landmark(landmarkRaw(2:3), stateMean(1:3)); % Get [landmarkX, landmarkY]
                 landmarkList(nLandmarksCurrent) = landmarkRaw(1); % Add ID to list of landmarks
@@ -51,15 +51,15 @@ for t = 1:nTimestamps
                 nLandmarksCurrent = nLandmarksCurrent + 1;
                 location = nLandmarksCurrent;
             else
-                location = find(landmarkRaw(1), landmarkList);
+                location = find(landmarkRaw(1), landmarkList); 
             end
             [z, H] = observation_model(stateMean(1:3), ...
                 [stateMean(3+location*2-1) stateMean(3+location*2)], ...
-                location, nLandmarksCurrent); % Get z = [landmarkDist, landmarkAngle] and jacobian
-            K = stateCov*(H')*(H*stateCov*(H')+lQ)';
-            stateMean = stateMean + K*(landmarkRaw(2:3)' - z);
+                location, nLandmarksCurrent); % Get z = [landmarkDist, landmarkAngle] and jacobian 
+            K = stateCov*(H')*(H*stateCov*(H')+Q)';
+            stateMean = stateMean + K*([range bearing]' - z);
             aux = K*H;
-            stateCov = (eye(size(aux))-aux)*stateCov;
+            stateCov = (eye(size(aux)-aux))*stateCov;
         end
     end
 end
