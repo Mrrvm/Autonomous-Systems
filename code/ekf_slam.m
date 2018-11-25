@@ -34,20 +34,27 @@ for t = 1:nTimestamps
 
 	%% Landmark Observation
     nSeen = 0;      %Number of landmarks observed
+    %Q = [var(robotState) 0; 0 var(measurement)];
 	%[range, bearing, ID] = aruco();
     if nSeen > 0
         for i = 1:nSeen
             if ~ismember(ID, landmarkList)
                 %% Add new landmark
                 landmark = new_landmark([range bearing], stateMean(1:3));
+                stateMean(3+nLandmarksCurrent*2+1) = landmark(1);
+                stateMean(3+nLandmarksCurrent*2+2) = landmark(2);
+                landmarkList(nLandmarksCurrent+1) = ID;
+                nLandmarksCurrent = nLandmarksCurrent + 1;
             end
             %% Correction step
             location = find(ID, landmarkList);
-            landmarkList(nLandmarksCurrent) = landmark(3);
-            stateMean(nLandmarksCurrent*2) = landmark(1);
-            stateMean(nLandmarksCurrent*2+1) = landmark(2);
-            % Calculate new stateCov ??
-            nLandmarksCurrent = nLandmarksCurrent + 1;
+            [z, H] = observation_model(stateMean(1:3), ...
+                [stateMean(3+location*2-1) stateMean(3+location*2)], ...
+                location, nLandmarksCurrent);
+            K = stateCov*(H')*inv(H*stateCov*(H')+Q);
+            stateMean = stateMean + K*([range bearing]' - z);
+            aux = K*H;
+            stateCov = (eye(size(aux)-aux))*stateCov;
         end
     end
 
