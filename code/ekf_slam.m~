@@ -35,16 +35,18 @@ for t = 1:nTimestamps
 	%% Landmark Observation
     landmark = observation_model(data(5:7, t), stateMean(1:3));
 	if ~ismember(landmark(3), landmarkList)
-        %% Add new landmark
+		%% Correction step
+		location = find(landmark(3), landmarkList);
+		% Calculate new stateMean
+		% Calculate new stateCov
+    else
+        
+		%% Add new landmark
 		landmarkList(nLandmarksCurrent) = landmark(3);
 		stateMean(nLandmarksCurrent*2) = landmark(1);
 		stateMean(nLandmarksCurrent*2+1) = landmark(2);
 		% Calculate new stateCov ??
 		nLandmarksCurrent = nLandmarksCurrent + 1;
-    end
-    %% Correction step
-	location = find(landmark(3), landmarkList);
-	% Calculate new stateMean
-		% Calculate new stateCov
+	end
 
 end
