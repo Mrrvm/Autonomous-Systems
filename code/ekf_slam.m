@@ -10,7 +10,7 @@ data = load(data.mat);
 %% Static Variables
 nTimestamps = data.nTimestamps;
 nLandmarksTotal = data.nLandmarks;
-wheeldistance = 0; % todo
+wheeldistance = 0.21;
 rNoise = zeros(4, 1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -23,7 +23,7 @@ stateCov = zeros(3+2*nLandmarksTotal, 3+2*nLandmarksTotal);
 Rn = zeros(3,3); % Robot noise
 lQ = zeros(2,2); % Landmark noise
 
-nLandmarksSeen = 0
+nLandmarksSeen = 0;
 nLandmarksCurrent = 0;
 landmarkRaw = zeros(3, 1);
 landmarkXY = zeros(2, 1);
@@ -35,8 +35,12 @@ for t = 1:nTimestamps
 	%% Prediction step
     %TODO --> Calculate rQ
     if online == 0
-        %TODO --> ensure t+1
-        time = data.odom(5, t+1);
+        %should ensure t+1 does not break
+        if t+1<length(data.odom,2)
+            time = data.odom(5, t+1);
+        else
+            time= data.odom(5, t)+1;
+        end
     else
         time = clock;
     end
