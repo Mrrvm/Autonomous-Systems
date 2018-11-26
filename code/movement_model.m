@@ -1,4 +1,6 @@
-function [robotPoseUpdated, G_t, R_t] = movement_model(robotPose, controlSignal, noise, odomTimeStamp, calcTimeStamp, wheeldistance, nLandmarks, jrp_n)
+function [robotPoseUpdated, G_t, R_t] = ...
+    movement_model(robotPose, controlSignal, noise, calcTimeStamp, ...
+    wheeldistance, nLandmarks, jrp_n)
 %  Model of the movement of the robot for slam.
 %
 %  In:
@@ -10,7 +12,7 @@ function [robotPoseUpdated, G_t, R_t] = movement_model(robotPose, controlSignal,
 %      robotPoseUpdated: updated robot pose
 %      jrp_r: Jacobian d(ro) / d(r) - derivate to robotpose
 %      jrp_n: Jacobian d(ro) / d(n) - derivated to noise
-  controlSignal=(calcTimeStamp-odomTimeStamp)*controlSignal;
+  controlSignal=(calcTimeStamp-controlSignal(5))*controlSignal;
 
   displacement=controlSignal+noise;
 
