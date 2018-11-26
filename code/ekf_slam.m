@@ -16,10 +16,11 @@ rNoise = zeros(4, 1);
 
 %% Dynamic Variables
 stateMean = zeros(3+2*nLandmarksTotal, 1);
+%TODO --> Make stateCov dynamic
+%TODO --> Avoid overwrite before matching step
 stateCov = zeros(3+2*nLandmarksTotal, 3+2*nLandmarksTotal);
 
-rJacob = zeros(3,3);
-rQ = zeros(2,2); % Robot noise
+Rn = zeros(3,3); % Robot noise
 lQ = zeros(2,2); % Landmark noise
 
 nLandmarksSeen = 0
@@ -32,11 +33,18 @@ landmarkList = zeros(nLandmarksTotal, 1);
 for t = 1:nTimestamps
 
 	%% Prediction step
-	[stateMean(1:3), rJacob, rQ] = ...
-		movement_model(stateMean(1:3), data.odom(1:4, t) , rNoise(:), wheeldistance);
-	% Calculate new stateCov
-	% todo
-
+    %TODO --> Calculate rQ
+    if online == 0
+        %TODO --> ensure t+1
+        time = data.odom(5, t+1);
+    else
+        time = clock;
+    end
+	[stateMean(1:3), rJacob, nJacob] = ...
+		movement_model(stateMean(1:3), data.odom(1:5, t), rNoise(:), time, ...
+        wheeldistance, nLandmarksCurrent, Rn);
+    
+    stateCov = rJacob*stateCov*rJacob' + nJacob;
 	%% Correction step
     nLandmarksSeen = data.landmark(t).nLandmarksSeen;
     if nLandmarksSeen > 0
