@@ -16,9 +16,8 @@ rNoise = zeros(4, 1);
 
 %% Dynamic Variables
 stateMean = zeros(3+2*nLandmarksTotal, 1);
-%TODO --> Make stateCov dynamic
+stateCov = zeros(3,3);
 %TODO --> Avoid overwrite before matching step
-stateCov = zeros(3+2*nLandmarksTotal, 3+2*nLandmarksTotal);
 
 Rn = zeros(3,3); % Robot noise
 lQ = zeros(2,2); % Landmark noise
@@ -60,6 +59,8 @@ for t = 1:nTimestamps
                 landmarkList(nLandmarksCurrent) = landmarkRaw(1); % Add ID to list of landmarks
                 stateMean(3+nLandmarksCurrent*2+1) = landmarkXY(1); % Add X to state mean
                 stateMean(3+nLandmarksCurrent*2+2) = landmarkXY(2); % Add Y to state mean
+                stateCov = [stateCov zeros(3+nLandmarksCurrent*2, 2)]; %Add 2 collums to state cov
+                stateCov = [stateCov; zeros(2, 3+nLandmarksCurrent*2+2)]; %Add 2 rows to state cov
                 nLandmarksCurrent = nLandmarksCurrent + 1;
                 location = nLandmarksCurrent;
             else
