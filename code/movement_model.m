@@ -12,10 +12,9 @@ function [robotPoseUpdated, G_t, R_t] = ...
 %      robotPoseUpdated: updated robot pose
 %      jrp_r: Jacobian d(ro) / d(r) - derivate to robotpose
 %      jrp_n: Jacobian d(ro) / d(n) - derivated to noise
+  controlSignal(2:2:5)=controlSignal(2:2:5)*pi*0.0304/60;%convert from rpm to m/s
   controlSignal=(calcTimeStamp-controlSignal(5))*controlSignal;
 
-  %missing speed(rpm) times wheel perimeter
-  controlSignal(2:2:5)=controlSignal(2:2:5)*pi*0.0304;
   displacement=controlSignal(1:4)+noise;
 
   d_x = (displacement(2)*cosd(robotPose(3)+displacement(1))+ ...
