@@ -23,9 +23,7 @@ timelimit=10;
 t=0:samplingtime:timelimit;
 
 %straigth line
-speed_ms=1;
-speed_rpm=speed_ms*60/(0.0304*pi);
-ctr=[0,speed_rpm,0,speed_rpm];
+ctr=[0,1,0,1];
 controlSignal=[repmat(ctr,[length(t),1]) t'];
 %
 
