@@ -16,9 +16,8 @@ rNoise = zeros(4, 1);
 
 %% Dynamic Variables
 stateMean = zeros(3+2*nLandmarksTotal, 1);
-%TODO --> Make stateCov dynamic
+stateCov = zeros(3,3);
 %TODO --> Avoid overwrite before matching step
-stateCov = zeros(3+2*nLandmarksTotal, 3+2*nLandmarksTotal);
 
 Rn = zeros(3,3); % Robot noise
 lQ = zeros(2,2); % Landmark noise
@@ -30,13 +29,14 @@ landmarkXY = zeros(2, 1);
 landmarkList = zeros(nLandmarksTotal, 1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-for t = 1:nTimestamps
+T = length(data.odom,2);
 
+for t = 1:nTimestamps
 	%% Prediction step
-    %TODO --> Calculate rQ
+    %TODO --> Calculate Rn
     if online == 0
         %should ensure t+1 does not break
-        if t+1<length(data.odom,2)
+        if t+1 < T
             time = data.odom(5, t+1);
         else
             time= data.odom(5, t)+1;
@@ -54,12 +54,14 @@ for t = 1:nTimestamps
     if nLandmarksSeen > 0
         for i = 1:nLandmarksSeen
             landmarkRaw = data.landmark(t).landmarkSeen(i); % Get [landmarkID, landmarkDist, landmarkAngle]
-            lQ = [var(landmarkRaw(2)) 0; 0 var(landmarkRaw(3))];
+            %lQ = [var(landmarkRaw(2)) 0; 0 var(landmarkRaw(3))];
             if ~ismember(landmarkRaw(1), landmarkList) % If never seen before, add new Landmark
                 landmarkXY = new_landmark(landmarkRaw(2:3), stateMean(1:3)); % Get [landmarkX, landmarkY]
                 landmarkList(nLandmarksCurrent) = landmarkRaw(1); % Add ID to list of landmarks
                 stateMean(3+nLandmarksCurrent*2+1) = landmarkXY(1); % Add X to state mean
                 stateMean(3+nLandmarksCurrent*2+2) = landmarkXY(2); % Add Y to state mean
+                stateCov = [stateCov zeros(3+nLandmarksCurrent*2, 2)]; %Add 2 collums to state cov
+                stateCov = [stateCov; zeros(2, 3+nLandmarksCurrent*2+2)]; %Add 2 rows to state cov
                 nLandmarksCurrent = nLandmarksCurrent + 1;
                 location = nLandmarksCurrent;
             else
