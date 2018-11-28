@@ -47,6 +47,7 @@ for t = 2:nTimestamps
         movement_model(stateMean(1:3)', [last_odom last_time], rNoise(:), data(t).time, ...
         wheeldistance, nLandmarksCurrent, Rn);
     
+    stateMean
     stateCov = rJacob*stateCov*rJacob' + nJacob;
 	%% Correction step
     if data(t).option == 1

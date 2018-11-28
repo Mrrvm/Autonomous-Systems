@@ -14,7 +14,7 @@ function [robotPoseUpdated, G_t, R_t] = ...
 %      jrp_n: Jacobian d(ro) / d(n) - derivated to noise
   controlSignal=(calcTimeStamp-controlSignal(5))*controlSignal;
 
-  displacement=controlSignal(1:4)+noise;
+  displacement=controlSignal(1:4)+noise';
 
   d_x = (displacement(2)*cosd(robotPose(3)+displacement(1))+ ...
           displacement(4)*cosd(robotPose(3)+displacement(3)))/2;
