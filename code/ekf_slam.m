@@ -15,12 +15,12 @@ online = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Dynamic Variables
-stateMean = zeros(3+2*nLandmarksTotal, 1);
+stateMean = zeros(3, 1);
 stateCov = zeros(3,3);
 %TODO --> Avoid overwrite before matching step
 
 Rn = zeros(3,3); % Robot noise
-lQ = zeros(2,2); % Landmark noise
+lQ = eye(2); % Landmark noise
 
 last_odom = zeros(1, 4);
 last_time = data(1).time;
@@ -47,7 +47,6 @@ for t = 2:nTimestamps
         movement_model(stateMean(1:3)', [last_odom last_time], rNoise(:), data(t).time, ...
         wheeldistance, nLandmarksCurrent, Rn);
     
-    stateMean
     stateCov = rJacob*stateCov*rJacob' + nJacob;
 	%% Correction step
     if data(t).option == 1
@@ -57,7 +56,7 @@ for t = 2:nTimestamps
                 landmarkRaw = data(t).landmark(i, :); % Get [landmarkID, landmarkDist, landmarkAngle]
                 %lQ = [var(landmarkRaw(2)) 0; 0 var(landmarkRaw(3))];
                 if ~ismember(landmarkRaw(1), landmarkList) % If never seen before, add new Landmark
-                    landmarkXY = new_landmark(landmarkRaw(2:3), stateMean(1:3)); % Get [landmarkX, landmarkY]
+                    landmarkXY = new_landmark([landmarkRaw(3) landmarkRaw(2)], stateMean(1:3)); % Get [landmarkX, landmarkY]
                     landmarkList(nLandmarksCurrent+1) = landmarkRaw(1); % Add ID to list of landmarks
                     stateMean(3+nLandmarksCurrent*2+1) = landmarkXY(1); % Add X to state mean
                     stateMean(3+nLandmarksCurrent*2+2) = landmarkXY(2); % Add Y to state mean
@@ -71,8 +70,8 @@ for t = 2:nTimestamps
                 [z, H] = observation_model(stateMean(1:3), ...
                     [stateMean(3+location*2-1) stateMean(3+location*2)], ...
                     location, nLandmarksCurrent); % Get z = [landmarkDist, landmarkAngle] and jacobian
-                K = stateCov*(H')*(H*stateCov*(H')+lQ)';
-                stateMean = stateMean + K*(landmarkRaw(2:3)' - z);
+                K = stateCov*(H')*inv(H*stateCov*(H')+lQ);
+                stateMean = stateMean + K*([landmarkRaw(3) landmarkRaw(2)]' - z');
                 aux = K*H;
                 stateCov = (eye(size(aux))-aux)*stateCov;
             end
