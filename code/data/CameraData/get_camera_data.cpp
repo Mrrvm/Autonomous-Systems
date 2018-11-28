@@ -24,8 +24,7 @@ void spawn_error(int cameraHandle, std::string where) {
  	//exit(EXIT_FAILURE);
 }
 
-std::string time_in_HH_MM_SS_MMM()
-{
+std::string time_in_HH_MM_SS_MMM() {
     using namespace std::chrono;
 
     // get current time
@@ -43,7 +42,7 @@ std::string time_in_HH_MM_SS_MMM()
 
     std::ostringstream oss;
 
-    oss << std::put_time(&bt, "%H:%M:%S"); // HH:MM:SS
+    oss << std::put_time(&bt, "%H.%M.%S"); // HH-MM-SS
     oss << '.' << std::setfill('0') << std::setw(3) << ms.count();
 
     return oss.str();

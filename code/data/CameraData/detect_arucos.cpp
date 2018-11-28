@@ -102,8 +102,8 @@ int main(int argc, char const *argv[]) {
                 //cout << "teta is " << teta << endl;
                 //cout << "distance is " << distance << endl;
 
-                outfile << "[" << markerIds[j] << " " << teta << " " << distance << "] ";
-                cout << "[" << teta << " " << distance << "] ";
+                outfile << markerIds[j] << " " << teta << " " << distance << " ";
+                cout << "[" << markerIds[j] << " " << teta << " " << distance << "] ";
 
                 rMatrix.release();
                 rvecs.clear();
