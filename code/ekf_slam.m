@@ -26,7 +26,7 @@ last_odom = zeros(1, 4);
 last_time = data(1).time;
 
 nLandmarksSeen = 0;
-nLandmarksCurrent = 1;
+nLandmarksCurrent = 0;
 landmarkRaw = zeros(3, 1);
 landmarkXY = zeros(2, 1);
 landmarkList = zeros(nLandmarksTotal, 1);
@@ -57,7 +57,7 @@ for t = 2:nTimestamps
                 %lQ = [var(landmarkRaw(2)) 0; 0 var(landmarkRaw(3))];
                 if ~ismember(landmarkRaw(1), landmarkList) % If never seen before, add new Landmark
                     landmarkXY = new_landmark(landmarkRaw(2:3), stateMean(1:3)); % Get [landmarkX, landmarkY]
-                    landmarkList(nLandmarksCurrent) = landmarkRaw(1); % Add ID to list of landmarks
+                    landmarkList(nLandmarksCurrent+1) = landmarkRaw(1); % Add ID to list of landmarks
                     stateMean(3+nLandmarksCurrent*2+1) = landmarkXY(1); % Add X to state mean
                     stateMean(3+nLandmarksCurrent*2+2) = landmarkXY(2); % Add Y to state mean
                     stateCov = [stateCov zeros(3+nLandmarksCurrent*2, 2)]; %Add 2 collums to state cov
