@@ -10,7 +10,7 @@ function [landmark] = new_landmark(measurement, robotPose)
 
     alfa = robotPose(3) + measurement(2);
     
-    landmark(1) = robotPose(1) + measurement(1)*cos(alfa);
-    landmark(2) = robotPose(2) + measurement(1)*sin(alfa);
+    landmark(1) = robotPose(1) + measurement(1)*cosd(alfa);
+    landmark(2) = robotPose(2) + measurement(1)*sind(alfa);
     
 end
