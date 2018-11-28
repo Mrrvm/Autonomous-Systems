@@ -51,7 +51,7 @@ for t = 2:nTimestamps
     stateCov = rJacob*stateCov*rJacob' + nJacob;
 	%% Correction step
     if data(t).option == 1
-        nLandmarksSeen = data(t).landsseen;
+        nLandmarksSeen = data(t).landmarksSeen;
         if nLandmarksSeen > 0
             for i = 1:nLandmarksSeen
                 landmarkRaw = data(t).landmark(i); % Get [landmarkID, landmarkDist, landmarkAngle]
