@@ -4,7 +4,7 @@
 % data.landmark(t) contains {nLandmarksSeen, landmarkSeen[]}
 % data.landmark(t).landmarkSeen(i) = [landmarkID, landmarkDist, landmarkAngle]
 % nLandmarksSeen is the number of landmarks observed in one image
-data = load(data.mat);
+load('/home/imarcher/Dropbox/Tecnico/SA/code/data/data.mat');
 
 %% Static Variables
 nTimestamps = size(data,2);
@@ -26,13 +26,13 @@ last_odom = zeros(1, 4);
 last_time = data(1).time;
 
 nLandmarksSeen = 0;
-nLandmarksCurrent = 0;
+nLandmarksCurrent = 1;
 landmarkRaw = zeros(3, 1);
 landmarkXY = zeros(2, 1);
 landmarkList = zeros(nLandmarksTotal, 1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-T = size(data.odom,2);
+nTimestamps = size(data, 2);
 
 for t = 2:nTimestamps
     %% Prediction step
@@ -44,7 +44,7 @@ for t = 2:nTimestamps
     end
     
     [stateMean(1:3), rJacob, nJacob] = ...
-        movement_model(stateMean(1:3), [last_odom last_time], rNoise(:), data(t).time, ...
+        movement_model(stateMean(1:3)', [last_odom last_time], rNoise(:), data(t).time, ...
         wheeldistance, nLandmarksCurrent, Rn);
     
     stateCov = rJacob*stateCov*rJacob' + nJacob;
@@ -53,7 +53,7 @@ for t = 2:nTimestamps
         nLandmarksSeen = data(t).landmarksSeen;
         if nLandmarksSeen > 0
             for i = 1:nLandmarksSeen
-                landmarkRaw = data(t).landmark(i); % Get [landmarkID, landmarkDist, landmarkAngle]
+                landmarkRaw = data(t).landmark(i, :); % Get [landmarkID, landmarkDist, landmarkAngle]
                 %lQ = [var(landmarkRaw(2)) 0; 0 var(landmarkRaw(3))];
                 if ~ismember(landmarkRaw(1), landmarkList) % If never seen before, add new Landmark
                     landmarkXY = new_landmark(landmarkRaw(2:3), stateMean(1:3)); % Get [landmarkX, landmarkY]
