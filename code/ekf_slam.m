@@ -1,7 +1,6 @@
 % Data vector contains
-% data.odom is a matrix [fwAngle, fwVelocity, bwAngle, bwVelocity] * nTimestamps
+% data.odom(t).date  data.odom(t).fwAngle data.odom(t).fwVelocity data.odom(t).bwAngle data.odom(t).bwVelocity]
 % % fw is front wheels, bw is back wheels
-% data.landmark is a vector of structures
 % data.landmark(t) contains {nLandmarksSeen, landmarkSeen[]}
 % data.landmark(t).landmarkSeen(i) = [landmarkID, landmarkDist, landmarkAngle]
 % nLandmarksSeen is the number of landmarks observed in one image
