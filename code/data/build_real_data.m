@@ -19,7 +19,7 @@ while true
   min = str2double(m);
   [m, r] = strtok(r, '.');
   sec = str2double(strcat(m,r));
-  cam(i).date = hour*3600+min*60+sec;
+  cam(i).timestamp = hour*3600+min*60+sec;
   cam(i).landmarksSeen =  str2double(brokenline(2));
 
   c = 3;
@@ -34,9 +34,34 @@ fclose(cameraDataFile);
 
 cameradataSize = i-1;
 
-
-for i=1:iterdataSize
-    iterdata.time(i, 1) = iterdata.date(i).hour*3600 + iterdata.date(i).min*60 + iterdata.date(i).seg;
+i = 1;
+k = 1;
+j = 1;
+while j <= cameradataSize 
+    tIter = iterdata.timestamp(i);  
+    tCam = cam(j).timestamp;
+    if tCam <= tIter
+        data(k).time = tCam;
+        data(k).option = 1;
+        data(k).landmarksSeen = cam(j).landmarksSeen;
+        data(k).landmark = cam(j).landmark;
+        k = k + 1;
+        j = j + 1;
+    end
+    if tCam > tIter 
+        data(k).time = tIter;
+        data(k).option = 0;
+        data(k).odom(:) = iterdata.odom(i,:);
+        k = k + 1;
+        i = i + 1;
+    end
 end
 
+while i <= iterdataSize
+    data(k).time = iterdata.timestamp(i);
+    data(k).option = 0;
+    data(k).odom(:) = iterdata.odom(i, :);
+    k = k + 1;
+    i = i + 1;
+end
 
