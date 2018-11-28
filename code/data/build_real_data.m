@@ -24,7 +24,7 @@ while true
 
   c = 3;
   for j = 1:cam(i).landmarksSeen
-      cam(i).landmark(j, :) = [str2double(brokenline(c)) str2double(brokenline(c+1)) str2double(brokenline(c+2))];
+      cam(i).landmark(j, :) = [str2double(brokenline(c)) 180*str2double(brokenline(c+1))/pi str2double(brokenline(c+2))];
       c = c+3;  
   end
   
