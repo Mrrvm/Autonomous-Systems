@@ -23,7 +23,7 @@ Angle1 = 0;
 Angle2 = 0;
 
 c = clock;
-data = struct('date', struct('year',c(1),'month',c(2),'day',c(3),'hour',c(4),'min',c(5),'seg',c(6)),'fwAngle', 0, 'fwSpeed', 0, 'bwAngle', 0, 'bwSpeed', 0);
+data = struct('timestamp', (c(4)*60 + c(5))*60 + c(6),'odom', zeros(1,4));
 
 while loopFlag
     if loopFlag == false
@@ -37,20 +37,14 @@ while loopFlag
         
         fwSpeed = (double(fwSpeed)*2*pi*wheelDiameter)/60;
         bwSpeed = (double(bwSpeed)*2*pi*wheelDiameter)/60;
-        
         c = clock;
-        data.date = [data.date; struct('year',c(1),'month',c(2),'day',c(3),'hour',c(4),'min',c(5),'seg',c(6))];
-        data.fwAngle = [data.fwAngle; double(fwAngle)];
-        data.bwAngle = [data.bwAngle; double(bwAngle)];
-        data.fwSpeed = [data.fwSpeed; fwSpeed];
-        data.bwSpeed = [data.bwSpeed; bwSpeed];
-            
+        data = [data; struct('timestamp', (c(4)*60 + c(5))*60 + c(6),'odom', [fwSpeed double(fwAngle) bwSpeed double(bwAngle)])];
+                    
     end
     
     pause(pauseCNT);
 end
 
-% data = data(2:end, :);
 
 save('iterdata.mat', 'data');
 
