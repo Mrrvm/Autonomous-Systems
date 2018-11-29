@@ -12,30 +12,30 @@ function [robotPoseUpdated, G_t, R_t] = ...
 %      robotPoseUpdated: updated robot pose
 %      jrp_r: Jacobian d(ro) / d(r) - derivate to robotpose
 %      jrp_n: Jacobian d(ro) / d(n) - derivated to noise
-  controlSignal=(calcTimeStamp-controlSignal(5))*controlSignal;
 
-  displacement=controlSignal(1:4)+noise;
+  timediff = (calcTimeStamp-controlSignal(5))/2;
+  displacement=controlSignal(1:4)+noise';
 
-  d_x = (displacement(2)*cosd(robotPose(3)+displacement(1))+ ...
-          displacement(4)*cosd(robotPose(3)+displacement(3)))/2;
+  d_x = (displacement(1)*cosd(robotPose(3)+displacement(2))+ ...
+          displacement(3)*cosd(robotPose(3)+displacement(4)))/2;
 
-  d_y = (displacement(2)*sind(robotPose(3)+displacement(1))+ ...
-          displacement(4)*sind(robotPose(3)+displacement(3)))/2;
+  d_y = (displacement(1)*sind(robotPose(3)+displacement(2))+ ...
+          displacement(3)*sind(robotPose(3)+displacement(4)))/2;
 
-  d_alpha = (displacement(2)*sind(displacement(1))- ...
-          displacement(4)*sind(displacement(3)))/wheeldistance;
+  d_alpha = (displacement(1)*sind(displacement(2))- ...
+          displacement(3)*sind(displacement(4)))/(wheeldistance/2);
 
-
-  robotPoseUpdated = robotPose + [d_x, d_y, d_alpha];
+  robotPoseUpdated = robotPose + [timediff*d_x, timediff*d_y, timediff*d_alpha];
 
 
   % Calculate Jacobians
-     jrp_p=[ 0, 0, (-displacement(2)*sind(robotPose(3)+displacement(1)) ...
-                -displacement(4)*sind(robotPose(3)+displacement(3)))/2;
-        0, 0, (displacement(2)*cosd(robotPose(3)+displacement(1)) ...
-                +displacement(4)*cosd(robotPose(3)+displacement(3)))/2;
+     jrp_p=[ 0, 0, (-displacement(1)*sind(robotPose(3)+displacement(2)) ...
+                -displacement(3)*sind(robotPose(3)+displacement(4)))/2;
+        0, 0, (displacement(1)*cosd(robotPose(3)+displacement(2)) ...
+                +displacement(3)*cosd(robotPose(3)+displacement(4)))/2;
         0, 0, 0];
 
+% DISPLACEMENT IS WRONG 
 %     jrp_n=[
 %         (-displacement(2)*sind(robotPose(3)+displacement(1)))/2, ...
 %         cosd(robotPose(3)+displacement(1))/2, ...
