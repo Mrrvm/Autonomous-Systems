@@ -4,7 +4,7 @@
 % data.landmark(t) contains {nLandmarksSeen, landmarkSeen[]}
 % data.landmark(t).landmarkSeen(i) = [landmarkID, landmarkDist, landmarkAngle]
 % nLandmarksSeen is the number of landmarks observed in one image
-load('/home/imarcher/Dropbox/Tecnico/SA/code/data/data.mat');
+%load('data.mat');
 
 %% Static Variables
 nTimestamps = size(data,2);
