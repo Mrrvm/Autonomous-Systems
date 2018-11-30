@@ -10,7 +10,8 @@
 nTimestamps = length(data);
 nLandmarksTotal = 12;
 wheeldistance = 0.21;
-rNoise = zeros(4, 1);
+rNoise = [0.1; 1; 0.1; 1];
+Rn = diag(rNoise.^2);   %probably wrong
 online = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -19,7 +20,6 @@ stateMean = zeros(3, 1);
 stateCov = zeros(3,3);
 %TODO --> Avoid overwrite before matching step
 
-Rn = zeros(3,3); % Robot noise
 lQ = eye(2); % Landmark noise
 
 last_odom = zeros(1, 4);
@@ -36,12 +36,12 @@ for t = 1:nTimestamps
     %% Prediction step
     %TODO --> Calculate Rn
     
+    noise = rNoise .* randn(4,1);
     [stateMean(1:3), rJacob, nJacob] = ...
-        movement_model(stateMean(1:3)', [last_odom last_time], rNoise(:), data(t).time, ...
+        movement_model(stateMean(1:3)', [last_odom last_time], noise, data(t).time, ...
         wheeldistance, nLandmarksCurrent, Rn);
     last_time = data(t).time;
 
-    
     stateCov = rJacob*stateCov*rJacob' + nJacob;
 	%% Correction step
     if data(t).option == 1
@@ -87,4 +87,4 @@ for i=1:length(landmarkList)
         plot(stateMean(3+2*i-1),stateMean(3+2*i),'xr')
     end
 end
-title('Final Plot');
+title('EKF Plot');

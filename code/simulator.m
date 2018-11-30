@@ -63,7 +63,7 @@ robotPose=[initialRobotPose;zeros(timelimit,3)];
 for i=2:size(controlSignal,1)
     [robotPose(i,:),~,~]= ...
         movement_model(robotPose(i-1,:),controlSignal(i-1,:),zeros(1,4)',t_odom(i), ...
-        0.21, 5, zeros(3));
+        0.21, 5, zeros(4));
 end
 
 %%
@@ -93,3 +93,12 @@ for i=1:(size(seenLand,1)+size(robotPose,1))
             measurements(measurements(:,4)==(floor(i/2)+rem(i,2)-1),1:3);
     end
 end
+
+%%
+figure(); hold on;
+plot(robotPose(1,1),robotPose(1,2),'og')
+plot(robotPose(:,1), robotPose(:,2))
+for i=1:length(landmarkMap)
+    plot(landmarkMap(i,1),landmarkMap(i,2),'xr')
+end
+title('Simulator Plot');
