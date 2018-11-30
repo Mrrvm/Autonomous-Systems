@@ -13,6 +13,9 @@ odomRand =true;
 odomSpeedLimits=[0, 3];
 odomAngleLimits=[0, 360];
 
+%Measurement Noise
+q = [.01;.1];
+
 %%
 if Lrand
     %here random landmarks
@@ -75,7 +78,8 @@ for i=1:size(robotPose,1)
     for j=1:size(landmarkMap,1)
         [measurement,~]=observation_model(robotPose(i,:),landmarkMap(j,:),1,1);
         if measurement(2)<90 || measurement(2)>270
-            measurements(n,:)=[j measurement(2) measurement(1) i-1];
+            measNoise = q.*randn(2,1);
+            measurements(n,:)=[j (measurement(2)+measNoise(1)) (measurement(1)+measNoise(2)) i-1];
             seenLand(i,1)=seenLand(i,1)+1;
             n=n+1;
         end

@@ -20,7 +20,8 @@ stateMean = zeros(3, 1);
 stateCov = zeros(3,3);
 %TODO --> Avoid overwrite before matching step
 
-lQ = eye(2); % Landmark noise
+q = [.01;.1];
+lQ = diag(q.^2); % Landmark noise
 
 last_odom = zeros(1, 4);
 last_time = data(1).time;
