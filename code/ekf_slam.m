@@ -7,7 +7,7 @@
 %load('data.mat');
 
 %% Static Variables
-nTimestamps = size(data,2);
+nTimestamps = length(data);
 nLandmarksTotal = 12;
 wheeldistance = 0.21;
 rNoise = zeros(4, 1);
@@ -32,20 +32,15 @@ landmarkXY = zeros(2, 1);
 landmarkList = -ones(nLandmarksTotal, 1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-nTimestamps = size(data, 2);
-
 for t = 2:nTimestamps
     %% Prediction step
     %TODO --> Calculate Rn
     
-	if data(t-1).option == 0
-        last_odom = data(t-1).odom; %save last odometry measurement
-        last_time = data(t-1).time; %and its time
-    end
-    
     [stateMean(1:3), rJacob, nJacob] = ...
         movement_model(stateMean(1:3)', [last_odom last_time], rNoise(:), data(t).time, ...
         wheeldistance, nLandmarksCurrent, Rn);
+    last_time = data(t).time;
+
     
     stateCov = rJacob*stateCov*rJacob' + nJacob;
 	%% Correction step
@@ -56,7 +51,8 @@ for t = 2:nTimestamps
                 landmarkRaw = data(t).landmark(i, :); % Get [landmarkID, landmarkDist, landmarkAngle]
                 %lQ = [var(landmarkRaw(2)) 0; 0 var(landmarkRaw(3))];
                 if ~ismember(landmarkRaw(1), landmarkList) % If never seen before, add new Landmark
-                    landmarkXY = new_landmark([landmarkRaw(3) landmarkRaw(2)], stateMean(1:3)); % Get [landmarkX, landmarkY]
+                    landmarkXY = ...
+                        new_landmark([landmarkRaw(3) landmarkRaw(2)], stateMean(1:3)); % Get [landmarkX, landmarkY]
                     landmarkList(nLandmarksCurrent+1) = landmarkRaw(1); % Add ID to list of landmarks
                     stateMean(3+nLandmarksCurrent*2+1) = landmarkXY(1); % Add X to state mean
                     stateMean(3+nLandmarksCurrent*2+2) = landmarkXY(2); % Add Y to state mean
@@ -76,5 +72,7 @@ for t = 2:nTimestamps
                 stateCov = (eye(size(aux))-aux)*stateCov;
             end
         end
+    else
+        last_odom = data(t).odom; %save last odometry measurement
     end
 end
