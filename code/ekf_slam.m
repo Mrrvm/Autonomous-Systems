@@ -12,7 +12,7 @@ nLandmarksTotal = 12;
 wheeldistance = 0.21;
 rNoise = [0.1; 1; 0.1; 1];
 Rn = diag(rNoise.^2);   %probably wrong
-online = 0;
+sim = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Dynamic Variables
@@ -22,6 +22,7 @@ stateCov = zeros(3,3);
 
 q = [.01;.1];
 lQ = diag(q.^2); % Landmark noise
+%lQ = eye(2);    %without correction
 
 last_odom = zeros(1, 4);
 last_time = data(1).time;
@@ -36,8 +37,12 @@ landmarkList = -ones(nLandmarksTotal, 1);
 for t = 1:nTimestamps
     %% Prediction step
     %TODO --> Calculate Rn
+    if sim == 1
+        noise = rNoise .* randn(4,1);
+    else
+        noise = zeros(4,1);
+    end
     
-    noise = rNoise .* randn(4,1);
     [stateMean(1:3), rJacob, nJacob] = ...
         movement_model(stateMean(1:3)', [last_odom last_time], noise, data(t).time, ...
         wheeldistance, nLandmarksCurrent, Rn);
