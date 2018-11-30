@@ -74,7 +74,7 @@ for i=1:size(robotPose,1)
     seenLand(i,:)=[0 i-1];
     for j=1:size(landmarkMap,1)
         [measurement,~]=observation_model(robotPose(i,:),landmarkMap(j,:),1,1);
-        if measurement(1)<90 || measurement(1)>270
+        if measurement(2)<90 || measurement(2)>270
             measurements(n,:)=[j measurement(2) measurement(1) i-1];
             seenLand(i,1)=seenLand(i,1)+1;
             n=n+1;
