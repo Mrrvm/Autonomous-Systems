@@ -75,4 +75,16 @@ for t = 1:nTimestamps
     else
         last_odom = data(t).odom; %save last odometry measurement
     end
+    xPose(t) = stateMean(1);
+    yPose(t) = stateMean(2);
 end
+
+figure(); hold on;
+plot(xPose(1),yPose(1),'og')
+plot(xPose, yPose)
+for i=1:length(landmarkList)
+    if ~(landmarkList(i) == -1)
+        plot(stateMean(3+2*i-1),stateMean(3+2*i),'xr')
+    end
+end
+title('Final Plot');
