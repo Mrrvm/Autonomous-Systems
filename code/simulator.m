@@ -25,6 +25,7 @@ t_odom=0:samplingtime_odom:timelimit; %TODO fancy time
 
 %straigth line
 ctr=[2,90,2,-90];
+%ctr=[1,0,1,0];
 controlSignal=[repmat(ctr,[length(t_odom),1]) t_odom'];
 %
 
@@ -51,11 +52,11 @@ end
 n=1;
 
 for i=1:size(robotPose,1)
-    seenLand(i,:)=[0 i];
+    seenLand(i,:)=[0 i-1];
     for j=1:size(landmarkMap,1)
         [measurement,~]=observation_model(robotPose(i,:),landmarkMap(j,:),1,1);
-        if abs(measurement(1))<90
-            measurements(n,:)=[j measurement i];
+        if measurement(1)<90 || measurement(1)>270
+            measurements(n,:)=[j measurement i-1];
             seenLand(i,1)=seenLand(i,1)+1;
             n=n+1;
         end
@@ -70,7 +71,6 @@ for i=1:(size(seenLand,1)+size(robotPose,1))
     data(i).landmarksSeen=seenLand(floor(i/2)+rem(i,2));
     if seenLand(floor(i/2)+rem(i,2))>0 && ~rem(i,2)
         data(i).landmark= ...
-            measurements(floor(i/2)+rem(i,2): ...
-            floor(i/2)+rem(i,2)+seenLand(floor(i/2)+rem(i,2))-1,1:3);
+            measurements(measurements(:,4)==(floor(i/2)+rem(i,2)-1),1:3);
     end
 end

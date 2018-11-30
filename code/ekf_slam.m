@@ -32,7 +32,7 @@ landmarkXY = zeros(2, 1);
 landmarkList = -ones(nLandmarksTotal, 1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-for t = 2:nTimestamps
+for t = 1:nTimestamps
     %% Prediction step
     %TODO --> Calculate Rn
     

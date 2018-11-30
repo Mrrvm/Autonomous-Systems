@@ -25,7 +25,7 @@ function [robotPoseUpdated, G_t, R_t] = ...
   d_alpha = (displacement(1)*sind(displacement(2))- ...
           displacement(3)*sind(displacement(4)))/wheeldistance;
 
-  robotPoseUpdated = robotPose + timediff*[d_x, d_y, d_alpha];
+  robotPoseUpdated = robotPose + timediff*[d_x, d_y, wrapTo360(d_alpha)];
 
 
   % Calculate Jacobians
