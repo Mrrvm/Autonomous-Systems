@@ -4,11 +4,21 @@
 %robot is initialized at position [0,0] with orientation 0
 initialRobotPose=[0,0,0];  %[x,y,alpha]
 
-%Flag for default or customized landmarks
-Lcustom = false;
+%Flag for default or customized landmarks-- CHANGE HERE
+Lrand = true;
+nRandLandmarks=5;
+LandmarkLimits=[-10,10];
 
-if Lcustom
-    %TODO add user input possibility
+odomRand =true;
+odomSpeedLimits=[0, 3];
+odomAngleLimits=[0, 360];
+
+%%
+if Lrand
+    %here random landmarks
+    nLandmarks=nRandLandmarks;
+    
+    landmarkMap= randi(LandmarkLimits,nRandLandmarks,2);
 else
     %create default landmarks
     nLandmarks=5;
@@ -23,11 +33,20 @@ timelimit=10;
 samplingtime_odom=1;
 t_odom=0:samplingtime_odom:timelimit; %TODO fancy time
 
-%straigth line
-ctr=[2,90,2,-90];
-%ctr=[1,0,1,0];
-controlSignal=[repmat(ctr,[length(t_odom),1]) t_odom'];
-%
+if odomRand
+    controlSignal=[randi(odomSpeedLimits,length(t_odom),1),...
+        randi(odomAngleLimits,length(t_odom),1), ...
+        randi(odomSpeedLimits,length(t_odom),1), ...
+        randi(odomAngleLimits,length(t_odom),1), ...
+        t_odom'
+        ];
+else
+    %straigth line
+    ctr=[2,90,2,-90];
+    %ctr=[1,0,1,0];
+    controlSignal=[repmat(ctr,[length(t_odom),1]) t_odom'];
+    %
+end
 
 %%
 %Define camera capture instants
