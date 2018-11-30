@@ -11,11 +11,13 @@ function [z, H] = observation_model(robotPose, landmark, i, N)
 %      z = [d, alfa] range and bearing of the landmark from the robot frame
 %      H:   Full and ready to use jacobian matrix
 
+    robotAngle = wrapTo180(robotPose(3));
+
     delta = [landmark(1)-robotPose(1); landmark(2)-robotPose(2)];
     q = delta'*delta;
     d = sqrt(q);
-    
-    z = [d wrapTo360(wrapTo360(atan2d(delta(2),delta(1)))-robotPose(3))];
+
+    z = [d atan2d(delta(2),delta(1))-robotAngle];
     
     A = zeros(1,2*(i-1));
     B = zeros(1,2*(N-i));
