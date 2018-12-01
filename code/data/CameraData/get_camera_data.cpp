@@ -13,7 +13,7 @@
 #define HEIGHT 1542
 #define WIDTH 2056
 #define BITSPIXEL 32
-#define PATH "/home/imarcher/SA_arucos/"
+#define PATH "/home/imarcher/ArucosGT4/"
 
 
 void spawn_error(int cameraHandle, std::string where) {
@@ -112,7 +112,7 @@ int main( int argc, char** argv ) {
 			}
 
 
-			imagePath << PATH << time_in_HH_MM_SS_MMM() << ".bmp";
+			imagePath << PATH << time_in_HH_MM_SS_MMM() << ".jpg";
 			imwrite(imagePath.str(), matImg);
 			cout << "Image " << imagePath.str() << " was captured!" << std::endl;
 			imagePath.str("");

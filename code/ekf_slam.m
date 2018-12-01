@@ -1,18 +1,40 @@
-% Data vector contains
-% data.odom(t).date  data.odom(t).fwAngle data.odom(t).fwVelocity data.odom(t).bwAngle data.odom(t).bwVelocity]
-% % fw is front wheels, bw is back wheels
-% data.landmark(t) contains {nLandmarksSeen, landmarkSeen[]}
-% data.landmark(t).landmarkSeen(i) = [landmarkID, landmarkDist, landmarkAngle]
-% nLandmarksSeen is the number of landmarks observed in one image
-%load('data.mat');
+clear all;
+close all;
+sim = 1;
+
+if sim
+    [data, robotPose, landmarkMap] = simulator();
+    figure(1); hold on;
+    title('Simulator Plot');
+    % Draw simulated landmarks
+    LsG = line(...
+    'linestyle','none',...
+    'marker','+',...
+    'color','r',...
+    'xdata',landmarkMap(:,1),...
+    'ydata',landmarkMap(:,2));
+    % Draw simulated robot pose
+    RsG = line(...
+    'linestyle','-',...
+    'marker','none',...
+    'color','b',...
+    'xdata',robotPose(:,1),...
+    'ydata',robotPose(:,2));
+    figure(1); hold off;
+
+else
+    load('data.mat');
+    % Draw groundtruth
+end
+
 
 %% Static Variables
 nTimestamps = length(data);
+ReG = zeros(1, nTimestamps);
 nLandmarksTotal = 12;
 wheeldistance = 0.21;
 rNoise = [0.1; 1; 0.1; 1];
 Rn = diag(rNoise.^2);   %probably wrong
-sim = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Dynamic Variables
@@ -37,7 +59,7 @@ landmarkList = -ones(nLandmarksTotal, 1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 for t = 1:nTimestamps
-    %% Prediction step
+     %% Prediction step
     %TODO --> Calculate Rn
     if sim == 1
         noise = rNoise .* randn(4,1);
@@ -51,6 +73,7 @@ for t = 1:nTimestamps
     last_time = data(t).time;
 
     stateCov = rJacob*stateCov*rJacob' + nJacob;
+    
 	%% Correction step
     if data(t).option == 1
         nLandmarksSeen = data(t).landmarksSeen;
@@ -66,7 +89,7 @@ for t = 1:nTimestamps
                     stateMean(3+nLandmarksCurrent*2+2) = landmarkXY(2); % Add Y to state mean
                     P_lx = Jr*stateCov(1:3,:);
                     P_ll = Jr*stateCov(1:3,1:3)*Jr' + Jl*lQ*Jl';
-                    stateCov = [stateCov P_lx']; %Add 2 collums to state cov
+                    stateCov = [stateCov P_lx']; %Add 2 columns to state cov
                     stateCov = [stateCov; P_lx P_ll]; %Add 2 rows to state cov
                     nLandmarksCurrent = nLandmarksCurrent + 1;
                     location = nLandmarksCurrent;
@@ -76,25 +99,101 @@ for t = 1:nTimestamps
                 [z, H] = observation_model(stateMean(1:3), ...
                     [stateMean(3+location*2-1) stateMean(3+location*2)], ...
                     location, nLandmarksCurrent); % Get z = [landmarkDist, landmarkAngle] and jacobian
-                K = stateCov*(H')*inv(H*stateCov*(H')+lQ);
-                stateMean = stateMean + K*([landmarkRaw(3) landmarkRaw(2)]' - z');
-                aux = K*H;
-                stateCov = (eye(size(aux))-aux)*stateCov;
+                 K = stateCov*(H')*inv(H*stateCov*(H')+lQ);
+                 stateMean = stateMean + K*([landmarkRaw(3) landmarkRaw(2)]' - z');
+                 aux = K*H;
+                 stateCov = (eye(size(aux))-aux)*stateCov;
             end
         end
     else
-        last_odom = data(t).odom; %save last odometry measurement
+        last_odom = data(t).odom; % Save last odometry measurement
     end
-    xPose(t) = stateMean(1);
-    yPose(t) = stateMean(2);
+    
+    %% PLOT
+    if t == 1
+        figure(2); hold on;
+        title('EKF Plot');
+        plot(stateMean(1),stateMean(2),'og')
+        figure(3); hold on;
+        title('EKF Plot with Landmark Covariance');
+        plot(stateMean(1),stateMean(2),'og')
+        figure(4); hold on;
+        title('EKF Plot with Robot Covariance');
+        plot(stateMean(1),stateMean(2),'og')
+    else
+        estPose(t,1) = stateMean(1);
+        estPose(t,2) = stateMean(2);
+        % Draw estimated robot pose
+        figure(3);
+        ReG(t) = line(...
+        'linestyle','none',...
+        'marker','^',...
+        'color','r',...
+        'xdata',stateMean(1),...
+        'ydata',stateMean(2));
+        figure(4);
+        ReG(t) = line(...
+        'linestyle','none',...
+        'marker','^',...
+        'color','r',...
+        'xdata',stateMean(1),...
+        'ydata',stateMean(2));
+        % Draw robot covariance
+        ReCov = stateCov(1:2,1:2);
+        [xx,yy] = cov2elli([stateMean(1) stateMean(2)],ReCov,3,16);
+        eLG = line(...
+        'linestyle','-',...
+        'marker','none',...
+        'color','m',...
+        'xdata',xx,...
+        'ydata',yy);
+        % Draw landmark covariance
+        figure(3);
+        for i=1:nLandmarksCurrent
+            LeCov = stateCov((3+2*i-1):(3+2*i),(3+2*i-1):(3+2*i));
+            [xx,yy] = cov2elli([stateMean(3+2*i-1) stateMean(3+2*i)],LeCov,3,16);
+            eLG = line(...
+            'linestyle','-',...
+            'marker','none',...
+            'color','g',...
+            'xdata',xx,...
+            'ydata',yy);
+        end
+        
+    end
 end
 
-figure(); hold on;
-plot(xPose(1),yPose(1),'og')
-plot(xPose, yPose)
-for i=1:length(landmarkList)
-    if ~(landmarkList(i) == -1)
-        plot(stateMean(3+2*i-1),stateMean(3+2*i),'xr')
-    end
+for i=1:nLandmarksCurrent
+    figure(2);
+    % Draw final estimated landmarks
+    LeG = line(...
+    'linestyle','none',...
+    'marker','+',...
+    'color','r',...
+    'xdata',stateMean(3+2*i-1),...
+    'ydata',stateMean(3+2*i));
+    figure(3);
+    LeG = line(...
+    'linestyle','none',...
+    'marker','+',...
+    'color','r',...
+    'xdata',stateMean(3+2*i-1),...
+    'ydata',stateMean(3+2*i));
+    figure(4);
+    LeG = line(...
+    'linestyle','none',...
+    'marker','+',...
+    'color','r',...
+    'xdata',stateMean(3+2*i-1),...
+    'ydata',stateMean(3+2*i));
 end
-title('EKF Plot');
+
+figure(2); hold on;
+ReGtotal = line(...
+        'linestyle','-',...
+        'marker','none',...
+        'color','b',...
+        'xdata',estPose(:,1),...
+        'ydata',estPose(:,2));
+
+

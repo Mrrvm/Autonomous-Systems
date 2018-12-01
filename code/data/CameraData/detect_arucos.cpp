@@ -4,7 +4,7 @@
 #include <sstream>
 
 #define N_SAMPLES 810
-#define SAMPLES_DIR "../../../../../../SA_arucos2/*.jpg"  
+#define SAMPLES_DIR "*.bmp"  
 #define MarkersSide 0.15 //15 cm
 
 void GetCalibration(Mat& intrinsics, Mat& distCoeffs) {
@@ -44,12 +44,7 @@ int main(int argc, char const *argv[]) {
     vector<cv::Vec3d> rvecs, tvecs;
     Mat intrinsics, distCoeffs;
     GetCalibration(intrinsics, distCoeffs);
-    Mat rMatrix;
-    Mat tCamAruco, tCamCenter;
 
-    double tCamCenterNorm;
-    double tCamArucoNorm;
-    double dotProduct;
     double teta;
     double distance;
     
@@ -60,9 +55,12 @@ int main(int argc, char const *argv[]) {
 
         undistort(imread(fn[i]), inputImage, intrinsics, distCoeffs);
         //imshow("inputImage", inputImage);
-        cv::aruco::detectMarkers(inputImage, dictionary, markerCorners, markerIds);
         //waitKey(0);
+        
+        cv::aruco::detectMarkers(inputImage, dictionary, markerCorners, markerIds);
+        
         cout << "Detected " << markerIds.size() << " arucos" << endl;
+        
         if (markerIds.size() > 0) {
             cout << "IDs: " << markerIds[0] << endl;
             
@@ -71,47 +69,34 @@ int main(int argc, char const *argv[]) {
             cv::aruco::estimatePoseSingleMarkers(markerCorners, MarkersSide, intrinsics, distCoeffs, rvecs, tvecs);
             
             outfile << timestamp << " " << markerIds.size() << " ";
-            cout << timestamp << " " << markerIds.size() << " ";
-            
+            cout << timestamp << " ";
 
+            cv::aruco::drawDetectedMarkers(inputImage, markerCorners, markerIds);
+            
             for(j=0; j<markerIds.size(); j++) {
 
-                //cout << "Landmark[" << j << "]:" << endl;
-                //cout << "Rotation vector: " << rvecs[j] << endl << "Translation vector: "  << tvecs[j] << endl;
+                cout << "Landmark[" << j << "]:" << endl;
                 
-                // Get rotation matrix
-                cv::Rodrigues(rvecs[j], rMatrix);
-                //cout << "Rotation matrix: " << endl << rMatrix << endl;
-
-                // Get translation vector into camera's reference point
-                tCamAruco = rMatrix*Mat(tvecs[j]);
-                //cout << "Translation vector in Camera's reference point " << endl << tCamAruco << endl;
+                cout << "\t" <<"Rotation vector: " << rvecs[j] << endl << "\t" << "Translation vector: "  << tvecs[j] << endl;
                 
-                // Image center from camera's reference point
-                tCamCenter = (Mat_<double>(1, 3) << 0, 0, tCamAruco.at<double>(2));
-               
-                // Computation of teta between vector through |a|.|b| = ||a||x||b||xcos(a,b)
-                tCamCenterNorm = norm(tCamCenter, NORM_L2);
-                tCamArucoNorm = norm(tCamAruco, NORM_L2);
-                dotProduct = tCamAruco.at<double>(2)*tCamCenter.at<double>(2);
-                teta = acos(dotProduct/(tCamArucoNorm*tCamCenterNorm));
-                
+                double z = tvecs[j][2];
+                double x = tvecs[j][0];
                 // Computation of distance to aruco through sqrt(a^2 + b^2)
-                distance = sqrt(tCamCenter.at<double>(0)*tCamCenter.at<double>(0) + tCamCenter.at<double>(2)*tCamCenter.at<double>(2));
+                distance = sqrt(z*z + x*x);
 
-                //cout << "teta is " << teta << endl;
-                //cout << "distance is " << distance << endl;
+                teta = atan(z/x);
 
                 outfile << markerIds[j] << " " << teta << " " << distance << " ";
                 cout << "[" << markerIds[j] << " " << teta << " " << distance << "] ";
 
-                rMatrix.release();
-                rvecs.clear();
-                tvecs.clear();
-                tCamAruco.release();
-                tCamCenter.release();
+                cv::aruco::drawAxis(inputImage, intrinsics, distCoeffs, rvecs[i], tvecs[i], 0.1);
+                cv::imshow("OutputImage", inputImage);
+                waitKey(0);
+
             }
 
+            rvecs.clear();
+            tvecs.clear();
             outfile << endl;
             cout << endl;
 
