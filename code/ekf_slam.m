@@ -22,7 +22,9 @@ stateCov = zeros(3,3);
 
 q = [.01;.1];
 lQ = diag(q.^2); % Landmark noise
-%lQ = eye(2);    %without correction
+
+Jr = zeros(2,3);
+Jl = zeros(2);
 
 last_odom = zeros(1, 4);
 last_time = data(1).time;
@@ -57,13 +59,15 @@ for t = 1:nTimestamps
                 landmarkRaw = data(t).landmark(i, :); % Get [landmarkID, landmarkDist, landmarkAngle]
                 %lQ = [var(landmarkRaw(2)) 0; 0 var(landmarkRaw(3))];
                 if ~ismember(landmarkRaw(1), landmarkList) % If never seen before, add new Landmark
-                    landmarkXY = ...
+                    [landmarkXY, Jr, Jl] = ...
                         new_landmark([landmarkRaw(3) landmarkRaw(2)], stateMean(1:3)); % Get [landmarkX, landmarkY]
                     landmarkList(nLandmarksCurrent+1) = landmarkRaw(1); % Add ID to list of landmarks
                     stateMean(3+nLandmarksCurrent*2+1) = landmarkXY(1); % Add X to state mean
                     stateMean(3+nLandmarksCurrent*2+2) = landmarkXY(2); % Add Y to state mean
-                    stateCov = [stateCov zeros(3+nLandmarksCurrent*2, 2)]; %Add 2 collums to state cov
-                    stateCov = [stateCov; zeros(2, 3+nLandmarksCurrent*2+2)]; %Add 2 rows to state cov
+                    P_lx = Jr*stateCov(1:3,:);
+                    P_ll = Jr*stateCov(1:3,1:3)*Jr' + Jl*lQ*Jl';
+                    stateCov = [stateCov P_lx']; %Add 2 collums to state cov
+                    stateCov = [stateCov; P_lx P_ll]; %Add 2 rows to state cov
                     nLandmarksCurrent = nLandmarksCurrent + 1;
                     location = nLandmarksCurrent;
                 else
