@@ -1,5 +1,5 @@
-clear;
-load('iterdata4.mat');
+%clear;
+%load('iterdata4.mat');
 
 %%
 nTimestamps = length(data);
@@ -9,7 +9,7 @@ last_time = data(1).timestamp;
 rNoise = zeros(4, 1);
 wheeldistance = 0.21;
 nLandmarksCurrent = 0;
-Rn = zeros(3,3);
+Rn = zeros(4,4);
 
 
 
@@ -18,7 +18,7 @@ for t = 1:nTimestamps
     %% Prediction step
     %TODO --> Calculate Rn
     
-    [pose, rJacob, nJacob] = ...
+    pose = ...
         movement_model(pose, [last_odom last_time], rNoise(:), data(t).timestamp, ...
         wheeldistance, nLandmarksCurrent, Rn);
     last_time = data(t).timestamp;

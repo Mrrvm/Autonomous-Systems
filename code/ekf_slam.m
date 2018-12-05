@@ -23,8 +23,8 @@ if sim
     figure(1); hold off;
 
 else
-    load('data.mat');
     % Draw groundtruth
+    load('data.mat');
 end
 
 
@@ -33,7 +33,7 @@ nTimestamps = length(data);
 ReG = zeros(1, nTimestamps);
 nLandmarksTotal = 12;
 wheeldistance = 0.21;
-rNoise = [0.1; 1; 0.1; 1];
+rNoise = [0.1; 0.0175; 0.1; 0.0175];
 Rn = diag(rNoise.^2);   %probably wrong
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -42,7 +42,7 @@ stateMean = zeros(3, 1);
 stateCov = zeros(3,3);
 %TODO --> Avoid overwrite before matching step
 
-q = [.1;.1];
+q = [0.1;0.0175];
 lQ = diag(q.^2); % Landmark noise
 
 Jr = zeros(2,3);
