@@ -17,7 +17,7 @@ wheelDistance = 0.21;
 %       W: world
 R = [0; -2; 0];
 u = [0.1; 10*pi/180; 0.1; 0];
-W = cloister(-4, 4, -4, 4); %TODO --> Build something cuter
+W = landmark_gen(-4, 4, -4, 4, 10, 1); %TODO --> Build something cuter
 y = zeros(2,size(W,2));
 
 %   2. Estimatior
