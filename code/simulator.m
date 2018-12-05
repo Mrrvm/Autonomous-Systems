@@ -7,16 +7,16 @@ function [data, robotPose, landmarkMap] = simulator()
     initialRobotPose=[0,0,0];  %[x,y,alpha]
 
     %Flag for default or customized landmarks-- CHANGE HERE
-    Lrand = true;
+    Lrand = false;
     nRandLandmarks=5;
     LandmarkLimits=[-10,10];
 
     odomRand =true;
     odomSpeedLimits=[0, 3];
-    odomAngleLimits=[0, 360];
+    odomAngleLimits=[0, 2*pi];
 
     %Measurement Noise
-    q = [.01;.1];
+    q = [.01;0.0175];
 
     %%
     if Lrand
@@ -40,14 +40,14 @@ function [data, robotPose, landmarkMap] = simulator()
 
     if odomRand
         controlSignal=[randi(odomSpeedLimits,length(t_odom),1),...
-            randi(odomAngleLimits,length(t_odom),1), ...
+            odomAngleLimits(1) + (odomAngleLimits(2)-odomAngleLimits(1)).*rand(length(t_odom),1) ...
             randi(odomSpeedLimits,length(t_odom),1), ...
-            randi(odomAngleLimits,length(t_odom),1), ...
+            odomAngleLimits(1) + (odomAngleLimits(2)-odomAngleLimits(1)).*rand(length(t_odom),1) ...
             t_odom'
             ];
     else
-        %straigth line
-        ctr=[2,90,2,-90];
+        %straight line
+        ctr=[2,pi/2,2,-pi/2];
         %ctr=[1,0,1,0];
         controlSignal=[repmat(ctr,[length(t_odom),1]) t_odom'];
         %
@@ -78,7 +78,7 @@ function [data, robotPose, landmarkMap] = simulator()
         seenLand(i,:)=[0 i-1];
         for j=1:size(landmarkMap,1)
             [measurement,~]=observation_model(robotPose(i,:),landmarkMap(j,:),1,1);
-            if measurement(2)<90 || measurement(2)>270
+            if measurement(2)<pi/2 || measurement(2)>3*pi/2
                 measNoise = q.*randn(2,1);
                 measurements(n,:)=[j (measurement(2)+measNoise(1)) (measurement(1)+measNoise(2)) i-1];
                 seenLand(i,1)=seenLand(i,1)+1;

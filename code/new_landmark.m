@@ -12,14 +12,14 @@ function [landmark, Jr, Jl] = new_landmark(measurement, robotPose)
 
     alfa = robotPose(3) + measurement(2);
     
-    landmark(1) = robotPose(1) + measurement(1)*cosd(alfa);
-    landmark(2) = robotPose(2) + measurement(1)*sind(alfa);
+    landmark(1) = robotPose(1) + measurement(1)*cos(alfa);
+    landmark(2) = robotPose(2) + measurement(1)*sin(alfa);
     
-    Jr = [1 0 -measurement(1)*sind(alfa); 0 1 measurement(1)*cosd(alfa)];
+    Jr = [1 0 -measurement(1)*sin(alfa); 0 1 measurement(1)*cos(alfa)];
     
-    Jl = [cosd(robotPose(3)) -sin(robotPose(3))
-        sind(robotPose(3)) cosd(robotPose(3))] * ...
-        [cosd(measurement(2)) -measurement(1)*sind(measurement(2))
-        sind(measurement(2)) measurement(1)*cosd(measurement(2))];
+    Jl = [cos(robotPose(3)) -sin(robotPose(3))
+        sin(robotPose(3)) cos(robotPose(3))] * ...
+        [cos(measurement(2)) -measurement(1)*sin(measurement(2))
+        sin(measurement(2)) measurement(1)*cos(measurement(2))];
     
 end

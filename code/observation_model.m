@@ -17,7 +17,7 @@ function [z, H] = observation_model(robotPose, landmark, i, N)
     q = delta'*delta;
     d = sqrt(q);
 
-    z = [d atan2d(delta(2),delta(1))-robotAngle];
+    z = [d atan2(delta(2),delta(1))-robotAngle];
     
     A = zeros(1,2*(i-1));
     B = zeros(1,2*(N-i));
