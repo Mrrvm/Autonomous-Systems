@@ -25,7 +25,7 @@ function [robotPoseUpdated, G_t, R_t] = ...
   d_alpha = (displacement(1)*sin(displacement(2))- ...
           displacement(3)*sin(displacement(4)))/wheeldistance;
 
-  robotPoseUpdated = robotPose + timediff*[d_x, d_y, d_alpha];
+  robotPoseUpdated = robotPose + timediff*[d_x, d_y, d_alpha]';
   robotPoseUpdated(3) = wrapToPi(robotPoseUpdated(3));
     
   if nargout > 1
