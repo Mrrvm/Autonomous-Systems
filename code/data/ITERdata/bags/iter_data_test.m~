@@ -14,18 +14,15 @@ x = zeros(length(data));
 y = zeros(length(data));
 
 %%
-for t = 1:nTimestamps
+for t = 2:nTimestamps
     %% Prediction step
     %TODO --> Calculate Rn
     pose = ...
         movement_model(pose, [last_odom last_time], rNoise(:), data(t).timestamp, ...
         wheeldistance, nLandmarksCurrent, Rn);
     last_time = data(t).timestamp;
-    last_odom = data(t).odom;
-    
-    x(t) = pose(1);
-    y(t) = pose(2);
-    
+    last_odom = data(t).odom
+   
     %{
     pose = data(t).odom;
     time = data(t).timestamp;
