@@ -26,7 +26,7 @@ function [robotPoseUpdated, G_t, R_t] = ...
           displacement(3)*sin(displacement(4)))/wheeldistance;
 
   robotPoseUpdated = robotPose + timediff*[d_x, d_y, d_alpha];
-  robotPoseUpdated(:,3) = wrapTo360(robotPoseUpdated(:,3));
+  robotPoseUpdated(:,3) = wrapToPi(robotPoseUpdated(:,3));
     
   if nargout > 1
     % Calculate Jacobians

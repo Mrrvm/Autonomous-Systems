@@ -6,7 +6,7 @@ function [data, robotPose, landmarkMap] = simulator()
     %robot is initialized at position [0,0] with orientation 0
     initialRobotPose=[0,0,0];  %[x,y,alpha]
 
-    %Flag for default or customized landmarks-- CHANGE HERE
+    %Flag for default or customized landmarks-- CHANGE HERE1
     Lrand = false;
     nRandLandmarks=5;
     LandmarkLimits=[-10,10];
@@ -61,7 +61,7 @@ function [data, robotPose, landmarkMap] = simulator()
     for i=2:size(controlSignal,1)
         [robotPose(i,:),~,~]= ...
             movement_model(robotPose(i-1,:),controlSignal(i-1,:),zeros(1,4)',t_odom(i), ...
-            0.21, nLandmark s, zeros(4));
+            0.21, nRandLandmarks, zeros(4));
     end
 
     %%
