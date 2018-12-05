@@ -80,7 +80,7 @@
       seenLand(i,:)=[0 i-1];
       for j=1:size(landmarkMap,1)
           [measurement,~]=observation_model(robotPose(i,:),landmarkMap(j,:),1,1);
-          if measurement(2)<90 || measurement(2)>270
+          if (measurement(2)<90 || measurement(2)>270) && measurement(2)<2
               measNoise = q.*randn(2,1);
               measurements(n,:)=[j (measurement(2)+measNoise(1)) (measurement(1)+measNoise(2)) i-1];
               seenLand(i,1)=seenLand(i,1)+1;
