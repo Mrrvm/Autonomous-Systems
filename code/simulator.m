@@ -1,4 +1,4 @@
-%function [data, robotPose, landmarkMap] = simulator()
+function [data, robotPose, landmarkMap] = simulator()
 
   %%
   %Map Generation
@@ -8,10 +8,10 @@
 
   %Flag for default or customized landmarks-- CHANGE HERE
   Lrand = true;
-  nLandmarks=5;
-  LandmarkLimits=[-10,10];
+  nLandmarks=15;
+  LandmarkLimits=[-5,5];
 
-  odomtype = 3;%0-rand;1-straigth;2-rotation;3-circle;
+  odomtype = 5;%0-rand;1-straigth;2-rotation;3-circle;
   odomSpeedLimits=[0, 3];
   odomAngleLimits=[0, 360];
 
@@ -22,10 +22,10 @@
   if Lrand
       landmarkMap= randi(LandmarkLimits,nLandmarks,2);
   else
-      landmarkMap =[2 -1; -4 -1; 6 -1; -3 -2; 1 -1];
+      landmarkMap =[2 -1; -4 -1; 6 -1; -3 2; 1 -1];
   end
 
-  timelimit=10;
+  timelimit=50;
 
   %%
   % Define control signal
@@ -41,18 +41,42 @@
           ];
   elseif odomtype==1
       %straigth line
-      ctr=[1,0,1,0];
+      ctr=[0.5,0,0.5,0];
       controlSignal=[repmat(ctr,[length(t_odom),1]) t_odom'];
       %
   elseif odomtype==2
       %rotation
-      ctr=[2,wrapToPi(degtorad(90)),2,wrapToPi(degtorad(-90))];
+      ctr=[1,wrapToPi(deg2rad(90)),1,wrapToPi(deg2rad(-90))];
       controlSignal=[repmat(ctr,[length(t_odom),1]) t_odom'];
       %
   elseif odomtype==3
       %circle
-      ctr=[1,wrapToPi(degtorad(90)),1,0];
+      ctr=[0.2,wrapToPi(deg2rad(20)),0.2,0];
       controlSignal=[repmat(ctr,[length(t_odom),1]) t_odom'];
+  elseif odomtype==4
+      %square
+      ctr=[0.5,0,0.5,0];
+      temp=repmat(ctr,[floor(length(t_odom)/4),1]);
+      ctr1=[0.5,wrapToPi(deg2rad(90)),0.5,wrapToPi(deg2rad(90))];
+      temp1=repmat(ctr1,[floor(length(t_odom)/4),1]);
+      ctr2=[-0.5,0,-0.5,0];
+      temp2=repmat(ctr2,[floor(length(t_odom)/4),1]);
+      ctr3=[-0.5,wrapToPi(deg2rad(90)),-0.5,wrapToPi(deg2rad(90))];
+      temp3=repmat(ctr3,[floor(length(t_odom)/4),1]);
+      aux=[temp; temp1; temp2; temp3];
+      temp4=repmat(ctr,[length(t_odom)-size(aux,1),1]);
+      controlSignal=[[aux; temp4] t_odom'];
+  elseif odomtype==5
+      %triangle
+      ctr=[0.5,0,0.5,0];
+      temp=repmat(ctr,[floor(length(t_odom)/3),1]);
+      ctr1=[-0.35,wrapToPi(deg2rad(45)),-0.35,wrapToPi(deg2rad(45))];
+      temp1=repmat(ctr1,[floor(length(t_odom)/3),1]);
+      ctr2=[-0.35,wrapToPi(deg2rad(-45)),-0.35,wrapToPi(deg2rad(-45))];
+      temp2=repmat(ctr2,[floor(length(t_odom)/3),1]);
+      aux=[temp; temp1; temp2];
+      temp4=repmat(ctr,[length(t_odom)-size(aux,1),1]);
+      controlSignal=[[aux; temp4] t_odom'];
   end
 
   %%
@@ -80,7 +104,7 @@
       seenLand(i,:)=[0 i-1];
       for j=1:size(landmarkMap,1)
           [measurement,~]=observation_model(robotPose(i,:),landmarkMap(j,:),1,1);
-          if (measurement(2)<90 || measurement(2)>270) && measurement(2)<2
+          if (abs(measurement(2))<deg2rad(90)) && measurement(1)<5
               measNoise = q.*randn(2,1);
               measurements(n,:)=[j (measurement(2)+measNoise(1)) (measurement(1)+measNoise(2)) i-1];
               seenLand(i,1)=seenLand(i,1)+1;
