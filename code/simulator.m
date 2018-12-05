@@ -20,15 +20,9 @@ function [data, robotPose, landmarkMap] = simulator()
 
     %%
     if Lrand
-        %here random landmarks
-        nLandmarks=nRandLandmarks;
-
-        landmarkMap= randi(LandmarkLimits,nRandLandmarks,2);
+        landmarkMap= randi(LandmarkLimits,nLandmarks,2);
     else
-        %create default landmarks
-        nLandmarks=5;
-
-        landmarkMap=[2 -1; -4 -1; 6 -1; -3 -2; 1 -1]; 
+        landmarkMap =[2 -1; -4 -1; 6 -1; -3 -2; 1 -1]; 
     end
 
     timelimit=10;
@@ -67,7 +61,7 @@ function [data, robotPose, landmarkMap] = simulator()
     for i=2:size(controlSignal,1)
         [robotPose(i,:),~,~]= ...
             movement_model(robotPose(i-1,:),controlSignal(i-1,:),zeros(1,4)',t_odom(i), ...
-            0.21, 5, zeros(4));
+            0.21, nLandmark s, zeros(4));
     end
 
     %%
