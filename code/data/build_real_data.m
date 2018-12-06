@@ -1,11 +1,11 @@
-load('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/bags/iterdata1.mat');
+load('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/bags/iterdata4.mat');
 iterdata = data; clear data;
-matObj = matfile('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/bags/iterdata1.mat');
+matObj = matfile('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/bags/iterdata4.mat');
 details = whos(matObj);
 aux = details.size;
 iterdataSize = aux(1);
 
-cameraDataFile = fopen('/home/imarcher/Dropbox/Tecnico/SA/code/data/CameraData/landmark.txt','r');
+cameraDataFile = fopen('/home/imarcher/Dropbox/Tecnico/SA/code/data/CameraData/landmark4.txt','r');
 
 i = 1;
 while true

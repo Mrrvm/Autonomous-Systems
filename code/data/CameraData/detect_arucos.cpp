@@ -4,7 +4,7 @@
 #include <sstream>
 
 #define N_SAMPLES 810
-#define SAMPLES_DIR "../../../../../../arucos/ArucosGT1/*.jpg"  
+#define SAMPLES_DIR "../../../../../../arucos/ArucosGT4/*.jpg"  
 #define MarkersSide 0.15 //15 cm
 
 void GetCalibration(Mat& intrinsics, Mat& distCoeffs) {
@@ -28,7 +28,7 @@ string FileName(const string& str) {
 
 int main(int argc, char const *argv[]) {
 
-    ofstream outfile ("landmark.txt");
+    ofstream outfile ("landmark4.txt");
 
     cv::String path(SAMPLES_DIR);
     vector<cv::String> fn;
@@ -89,7 +89,7 @@ int main(int argc, char const *argv[]) {
                 
                 // Computation of distance to aruco through sqrt(a^2 + b^2)
                 distance = sqrt(z*z + x*x);
-                teta = atan2(z,x) - 1.570796327;
+                teta = atan2(x,z);
 
                 outfile << markerIds[j] << " " << teta << " " << distance << " ";
                 cout << "[id teta distance]" << endl << "[" << markerIds[j] << " " << teta << " " << distance << "] " << endl;
