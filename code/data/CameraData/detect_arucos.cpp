@@ -4,7 +4,7 @@
 #include <sstream>
 
 #define N_SAMPLES 810
-#define SAMPLES_DIR "../../../../../../arucos/ArucosGT4/*.jpg"  
+#define SAMPLES_DIR "../../../../../../arucos/SA_arucos2/*.jpg"  
 #define MarkersSide 0.15 //15 cm
 
 void GetCalibration(Mat& intrinsics, Mat& distCoeffs) {
@@ -28,7 +28,7 @@ string FileName(const string& str) {
 
 int main(int argc, char const *argv[]) {
 
-    ofstream outfile ("landmark4.txt");
+    ofstream outfile ("landmark.txt");
 
     cv::String path(SAMPLES_DIR);
     vector<cv::String> fn;
