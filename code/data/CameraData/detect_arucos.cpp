@@ -89,7 +89,7 @@ int main(int argc, char const *argv[]) {
                 
                 // Computation of distance to aruco through sqrt(a^2 + b^2)
                 distance = sqrt(z*z + x*x);
-                teta = atan2(z,x);
+                teta = atan2(z,x) - 1.570796327;
 
                 outfile << markerIds[j] << " " << teta << " " << distance << " ";
                 cout << "[id teta distance]" << endl << "[" << markerIds[j] << " " << teta << " " << distance << "] " << endl;
@@ -110,6 +110,7 @@ int main(int argc, char const *argv[]) {
 
         }
         i++;
+        inputImage.release();
     }
 	
 	return 0;
