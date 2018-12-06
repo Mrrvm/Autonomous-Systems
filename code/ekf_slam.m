@@ -7,7 +7,7 @@ if sim
     figure(1); hold on;
     title('Simulator Plot');
     % Draw simulated landmarks
-    LsG = line(...
+    LsG  = line(...
     'linestyle','none',...
     'marker','+',...
     'color','r',...
@@ -55,6 +55,10 @@ nLandmarksCurrent = 0;
 landmarkRaw = zeros(3, 1);
 landmarkXY = zeros(2, 1);
 landmarkList = -ones(nLandmarksTotal, 1);
+
+runtime=zeros(nTimestamps,1);
+error=zeros(nTimestamps,1);
+errorc=zeros(nTimestamps,1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %   3. Graphics
@@ -123,6 +127,17 @@ for t = 1:nTimestamps
         noise = zeros(4,1);
     end
     
+    %%%
+    couve = ...
+        movement_model(stateMean(1:3)', [last_odom last_time], noise, data(t).time, ...
+        wheeldistance, nLandmarksCurrent, Rn);
+    errorc(t)=norm(abs(couve(1:2))-abs(robotPose(floor(t/2)+rem(t,2),1:2)))^2;
+    if errorc(t)>2
+        disp('here couve')
+    end
+    %%%%
+    
+    tic
     [stateMean(1:3), rJacob, nJacob] = ...
         movement_model(stateMean(1:3)', [last_odom last_time], noise, data(t).time, ...
         wheeldistance, nLandmarksCurrent, Rn);
@@ -156,15 +171,25 @@ for t = 1:nTimestamps
                     [stateMean(3+location*2-1) stateMean(3+location*2)], ...
                     location, nLandmarksCurrent); % Get z = [landmarkDist, landmarkAngle] and jacobian
                  K = (stateCov*(H'))/(H*stateCov*(H')+lQ);
-                 stateMean = stateMean + K*([landmarkRaw(3) landmarkRaw(2)]' - z');
-                 aux = K*H;
-                 stateCov = (eye(size(aux))-aux)*stateCov;
+                 if ([landmarkRaw(3) landmarkRaw(2)]' - z')<3
+                    stateMean = stateMean + K*([landmarkRaw(3) landmarkRaw(2)]' - z');
+                     aux = K*H;
+                     stateCov = (eye(size(aux))-aux)*stateCov;
+                 end
             end
         end
     else
         last_odom = data(t).odom; % Save last odometry measurement
         index = index+1;
     end
+    runtime(t)=toc;
+    
+    error(t)=norm(abs(stateMean(1:2)')-abs(robotPose(floor(t/2)+rem(t,2),1:2)))^2;
+    %%%%
+    if error(t)>2
+        disp('here')
+    end
+    %%%%
     
     %   3. Graphics
     if sim
@@ -191,8 +216,17 @@ for t = 1:nTimestamps
     estPose(t,1) = stateMean(1,1);
     estPose(t,2) = stateMean(2,1);
     drawnow;
-    pause(0.2);
+    pause(0.1);
 end
+
+%Error calculations
+maxErrorSquared=max(error)
+avgErrorSquared=mean(error)
+
+%TimeCalculations
+maxTime=max(runtime)
+avgTime=mean(runtime)
+
 
 % Draw estimated robot pose
 figure(2); hold on;
