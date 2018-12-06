@@ -30,9 +30,9 @@ end
 %% Static Variables
 nTimestamps = length(data);
 ReG = zeros(1, nTimestamps);
-nLandmarksTotal = 12;
+nLandmarksTotal = 15;
 wheeldistance = 0.21;
-rNoise = [0.1; 0.0175; 0.1; 0.0175];
+rNoise = [0.05; 0.0175; 0.05; 0.0175];
 Rn = diag(rNoise.^2);   %probably wrong
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -81,8 +81,14 @@ rG = line('parent',gca, ...     %estimator robot
     'xdata', robotPose(1,1), ...
     'ydata', robotPose(1,2));
 
+relipG = line('parent',gca, ...     %estimator robot elipses
+    'color', 'b', ...
+    'xdata', [], ...
+    'ydata', []);
+
+
 if sim
-    lG = zeros(1,size(landmarkMap,1));        %this is for the landmarks elipses
+    lG = zeros(1,size(landmarkMap,1));        %this is for the landmarks
 else
     lG = zeros(1,nLandmarksTotal);
 end
@@ -111,7 +117,6 @@ estPose = size(nTimestamps,2);
 index = 0;
 for t = 1:nTimestamps
      %% Prediction step
-    %TODO --> Calculate Rn
     if sim == 1
         noise = rNoise .* randn(4,1);
     else
@@ -167,6 +172,10 @@ for t = 1:nTimestamps
             'ydata', robotPose(index,2)); %simulator robot
     end
     set(rG, 'xdata', stateMean(1), 'ydata', stateMean(2)); %estimator robot
+    el = [stateMean(1); stateMean(2)];
+    EL = stateCov(1:2, 1:2);
+    [X,Y] = cov2elli(el,EL,3,16);
+    set(relipG, 'xdata', X, 'ydata', Y);
     lids = nLandmarksCurrent;
     if lids > 0
         for lid = 1:lids
@@ -182,7 +191,7 @@ for t = 1:nTimestamps
     estPose(t,1) = stateMean(1,1);
     estPose(t,2) = stateMean(2,1);
     drawnow;
-    pause(0.5);
+    pause(0.2);
 end
 
 % Draw estimated robot pose

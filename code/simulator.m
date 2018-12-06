@@ -11,9 +11,13 @@ function [data, robotPose, landmarkMap] = simulator()
   nLandmarks=15;
   LandmarkLimits=[-5,5];
 
-  odomtype = 5;%0-rand;1-straigth;2-rotation;3-circle;
+  odomtype = 3;%0-rand;1-straigth;2-rotation;3-circle;4-square;5-triangle
   odomSpeedLimits=[0, 3];
   odomAngleLimits=[0, 360];
+  
+  
+  %measurements
+  camlimit=5;
 
   %Measurement Noise
   q = [.01;.1];
@@ -104,7 +108,7 @@ function [data, robotPose, landmarkMap] = simulator()
       seenLand(i,:)=[0 i-1];
       for j=1:size(landmarkMap,1)
           [measurement,~]=observation_model(robotPose(i,:),landmarkMap(j,:),1,1);
-          if (abs(measurement(2))<deg2rad(90)) && measurement(1)<5
+          if (abs(measurement(2))<deg2rad(90)) && measurement(1)<camlimit
               measNoise = q.*randn(2,1);
               measurements(n,:)=[j (measurement(2)+measNoise(1)) (measurement(1)+measNoise(2)) i-1];
               seenLand(i,1)=seenLand(i,1)+1;
