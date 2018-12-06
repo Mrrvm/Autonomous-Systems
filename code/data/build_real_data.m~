@@ -1,6 +1,6 @@
-load('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/bags/iterdata4.mat');
+load('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/iterdata.mat');
 iterdata = data; clear data;
-matObj = matfile('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/bags/iterdata4.mat');
+matObj = matfile('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/iterdata.mat');
 details = whos(matObj);
 aux = details.size;
 iterdataSize = aux(1);
