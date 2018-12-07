@@ -93,16 +93,10 @@ function key_pressed(src,event)
 
         
     elseif event.Key == 'o'
-        Angle1 = 90;
-        CASK_SendRequest('Angle1', Angle1);
-        
-    elseif event.Key == 'i'
-        Angle2 = 270;
+        if (Angle2+10)<90 || (Angle2+10)>260
+            Angle2 = wrapTo360(Angle2+10);
+        end
         CASK_SendRequest('Angle2', Angle2);
-        
-    elseif event.Key == 'p'
-        speed = 130;
-        CASK_SendRequest('Speed1',speed,'Speed2',speed);
 
     end
 end

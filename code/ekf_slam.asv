@@ -29,12 +29,10 @@ end
 
 %% Static Variables
 nTimestamps = length(data);
-plotx = zeros(nTimestamps,1);
-ploty = zeros(nTimestamps,1);
 ReG = zeros(1, nTimestamps);
 nLandmarksTotal = 15;
 wheeldistance = 0.21;
-rNoise = [0.05; 0.0175; 0.05; 0.0175];
+rNoise = [0.01; 0.0175; 0.01; 0.0175];
 Rn = diag(rNoise.^2);   %probably wrong
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -132,8 +130,6 @@ for t = 1:nTimestamps
         wheeldistance, nLandmarksCurrent, Rn);
     last_time = data(t).time;
 
-    plotx(t,1) = stateMean(1);
-    ploty(t,1) = stateMean(2);
     stateCov = rJacob*stateCov*rJacob' + nJacob;
     
 	%% Correction step
