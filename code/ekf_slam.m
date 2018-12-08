@@ -210,17 +210,17 @@ for t = 1:nTimestamps
     el = [stateMean(1); stateMean(2)];
     EL = stateCov(1:2, 1:2);
     [X,Y] = cov2elli(el,EL,3,16);
-    set(relipG, 'xdata', X, 'ydata', Y);
+    set(relipG, 'xdata', Y, 'ydata', X);
     lids = nLandmarksCurrent;
     if lids > 0
         for lid = 1:lids
             lx = stateMean(3+(lid*2)-1,1);  %landmarks x coordinate
             ly = stateMean(3+lid*2,1);  %landmarks y coordinate
-            set(lG(lid), 'xdata', lx, 'ydata', ly);
+            set(lG(lid), 'xdata', ly, 'ydata', lx);
             el = [stateMean(3+(lid*2)-1,1); stateMean(3+(lid*2),1)];
             EL = stateCov([3+(lid*2)-1 3+(lid*2)],[3+(lid*2)-1 3+(lid*2)]);
             [X,Y] = cov2elli(el,EL,3,16);
-            set(eG(lid), 'xdata', X, 'ydata', Y);
+            set(eG(lid), 'xdata', Y, 'ydata', X);
         end
     end
     estPose(t,1) = stateMean(1,1);
@@ -244,8 +244,8 @@ ReGtotal = line(...
         'linestyle','-',...
         'marker','none',...
         'color','b',...
-        'xdata',estPose(:,1),...
-        'ydata',estPose(:,2));
+        'xdata',estPose(:,2),...
+        'ydata',estPose(:,1));
 
 % Draw estimated landmarks
 for i=1:nLandmarksCurrent
@@ -254,6 +254,6 @@ for i=1:nLandmarksCurrent
     'linestyle','none',...
     'marker','+',...
     'color','r',...
-    'xdata',stateMean(3+2*i-1),...
-    'ydata',stateMean(3+2*i));
+    'xdata',stateMean(3+2*i),...
+    'ydata',stateMean(3+2*i-1));
 end
