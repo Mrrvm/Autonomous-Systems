@@ -24,7 +24,7 @@ if sim
 
 else
     % Draw groundtruth
-    load('dataPiso8_4.mat');
+    load('data/dataCorredor1akaSquare.mat');
 end
 
 %% Static Variables
@@ -34,8 +34,8 @@ ploty = zeros(nTimestamps,1);
 ReG = zeros(1, nTimestamps);
 nLandmarksTotal = 15;
 wheeldistance = 0.21;
-%rNoise = [0.1; 0.03; 0.1; 0.03];
-rNoise = [0.2; 0.1; 0.2; 0.1];
+rNoise = [0.05; 0.0175; 0.05; 0.0175];
+%rNoise = [0.2; 0.1; 0.2; 0.1];
 Rn = diag(rNoise.^2);   %probably wrong
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -180,7 +180,7 @@ for t = 1:nTimestamps
                     [stateMean(3+location*2-1) stateMean(3+location*2)], ...
                     location, nLandmarksCurrent); % Get z = [landmarkDist, landmarkAngle] and jacobian
 
-                if ([landmarkRaw(3) landmarkRaw(2)] - z)<3
+                if ([landmarkRaw(3) landmarkRaw(2)] - z)<10
                     K = (stateCov*(H'))/(H*stateCov*(H')+lQ);
                     stateMean = stateMean + K*([landmarkRaw(3) landmarkRaw(2)]' - z');
                     aux = K*H;
