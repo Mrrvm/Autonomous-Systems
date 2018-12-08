@@ -1,5 +1,6 @@
-%clear;
-%load('iterdata4.mat');
+clear;
+% load(fullfile('90degturn_50rpm','iterdata3.mat'));
+load('iterdatacorredorsquare.mat')
 
 %%
 nTimestamps = length(data);
@@ -17,6 +18,10 @@ y = zeros(length(data));
 for t = 1:nTimestamps
     %% Prediction step
     %TODO --> Calculate Rn
+    data(t,1).odom(1) = data(t).odom(1)/2;
+    data(t,1).odom(3) = data(t).odom(3)/2;
+    data(t,1).odom(2) = wrapToPi(data(t).odom(2));
+    data(t,1).odom(4) = wrapToPi(data(t).odom(4));
     pose = ...
         movement_model(pose, [last_odom last_time], rNoise(:), data(t).timestamp, ...
         wheeldistance, nLandmarksCurrent, Rn);
@@ -25,6 +30,7 @@ for t = 1:nTimestamps
     
     x(t) = pose(1);
     y(t) = pose(2);
+    z(t) = pose(3);
     
     %{
     pose = data(t).odom;
@@ -40,4 +46,8 @@ end
 %%
 figure(); hold on;
 plot(x,y);
+
+z = rad2deg(z)';
+
+z(end)
 

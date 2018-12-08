@@ -1,6 +1,6 @@
 clear all;
 close all;
-sim = 1;
+sim = 0;
 
 if sim
     [data, robotPose, landmarkMap] = simulator();
@@ -24,11 +24,13 @@ if sim
 
 else
     % Draw groundtruth
-    load('data.mat');
+    load('dataCorredorSquare.mat');
 end
 
 %% Static Variables
 nTimestamps = length(data);
+plotx = zeros(nTimestamps,1);
+ploty = zeros(nTimestamps,1);
 ReG = zeros(1, nTimestamps);
 nLandmarksTotal = 15;
 wheeldistance = 0.21;
@@ -41,7 +43,7 @@ stateMean = zeros(3, 1);
 stateCov = zeros(3,3);
 %TODO --> Avoid overwrite before matching step
 
-q = [0.1;0.0175];
+q = [0.05;0.0175];
 lQ = diag(q.^2); % Landmark noise
 
 Jr = zeros(2,3);
@@ -74,12 +76,14 @@ if sim
         'color', 'r', ...
         'xdata', robotPose(1,1), ...
         'ydata', robotPose(1,2));
-end
-rG = line('parent',gca, ...     %estimator robot
+    
+    rG = line('parent',gca, ...     %estimator robot
     'marker', '*', ...
     'color', 'b', ...
     'xdata', robotPose(1,1), ...
     'ydata', robotPose(1,2));
+end
+
 
 relipG = line('parent',gca, ...     %estimator robot elipses
     'color', 'b', ...
@@ -128,6 +132,8 @@ for t = 1:nTimestamps
         wheeldistance, nLandmarksCurrent, Rn);
     last_time = data(t).time;
 
+    plotx(t,1) = stateMean(1);
+    ploty(t,1) = stateMean(2);
     stateCov = rJacob*stateCov*rJacob' + nJacob;
     
 	%% Correction step
@@ -170,8 +176,9 @@ for t = 1:nTimestamps
     if sim
         set(RG, 'xdata', robotPose(index,1), ...
             'ydata', robotPose(index,2)); %simulator robot
+        set(rG, 'xdata', stateMean(1), 'ydata', stateMean(2)); %estimator robot
     end
-    set(rG, 'xdata', stateMean(1), 'ydata', stateMean(2)); %estimator robot
+    
     el = [stateMean(1); stateMean(2)];
     EL = stateCov(1:2, 1:2);
     [X,Y] = cov2elli(el,EL,3,16);
@@ -191,7 +198,7 @@ for t = 1:nTimestamps
     estPose(t,1) = stateMean(1,1);
     estPose(t,2) = stateMean(2,1);
     drawnow;
-    pause(0.2);
+%     pause(0.2);
 end
 
 % Draw estimated robot pose

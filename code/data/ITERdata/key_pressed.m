@@ -68,29 +68,41 @@ function key_pressed(src,event)
         CASK_SendRequest('Angle1',Angle1,'Speed1',speed,'Speed2',speed,'Angle2',Angle2);
            
     elseif event.Key == 'a'
-        if (Angle1-10)>290 || (Angle1-10)<60
+        if (Angle1-10)>260 || (Angle1-10)<90
             Angle1 = wrapTo360(Angle1-10);
         end
         CASK_SendRequest('Angle1', Angle1);
         
     elseif event.Key == 'd'
-        if (Angle1+10)<60 || (Angle1+10)>290
+        if (Angle1+10)<90 || (Angle1+10)>260
             Angle1 = wrapTo360(Angle1+10);
         end
         CASK_SendRequest('Angle1', Angle1);
         
     elseif event.Key == 'q'
-        if (Angle2-10)>290 || (Angle2-10)<60
+        if (Angle2-10)>260 || (Angle2-10)<90
             Angle2 = wrapTo360(Angle2-10);
         end
         CASK_SendRequest('Angle2', Angle2);
         
     elseif event.Key == 'e'
-        if (Angle2+10)<60 || (Angle2+10)>290
+        if (Angle2+10)<90 || (Angle2+10)>260
             Angle2 = wrapTo360(Angle2+10);
         end
         CASK_SendRequest('Angle2', Angle2);
 
+        
+    elseif event.Key == 'o'
+        Angle1 = 90;
+        CASK_SendRequest('Angle1', Angle1);
+        
+    elseif event.Key == 'i'
+        Angle2 = 270;
+        CASK_SendRequest('Angle2', Angle2);
+        
+    elseif event.Key == 'p'
+        speed = 130;
+        CASK_SendRequest('Speed1',speed,'Speed2',speed);
 
     end
 end
