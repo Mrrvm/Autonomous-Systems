@@ -24,7 +24,7 @@ if sim
 
 else
     % Draw groundtruth
-    load('dataPiso8_4.mat');
+    load('dataCorredor1akaSquare.mat');
 end
 
 %% Static Variables
