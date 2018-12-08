@@ -24,7 +24,7 @@ if sim
 
 else
     % Draw groundtruth
-    load('data/dataCorredor1akaSquare.mat');
+    load('data/dataSala1.mat');
 end
 
 %% Static Variables
@@ -46,7 +46,7 @@ stateCov = zeros(3,3);
 %StateCov(2,2) = 0.1;
 %TODO --> Avoid overwrite before matching step
 
-q = [0.05;0.0175];
+q = [0.1;0.03];
 lQ = diag(q.^2); % Landmark noise
 
 Jr = zeros(2,3);

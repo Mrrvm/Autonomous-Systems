@@ -11,7 +11,7 @@ load('iterdataSala1.mat')
 iterdataSize = size(iterdata,1);
 
 % cameraDataFile = fopen('/home/imarcher/Dropbox/Tecnico/SA/code/data/CameraData/landmark4.txt','r');
-cameraDataFile = fopen('landmarkPiso8_4.txt','r');
+cameraDataFile = fopen('landmarkSala1.txt','r');
 
 i = 1;
 while true
@@ -81,4 +81,4 @@ while i <= iterdataSize
     i = i + 1;
 end
 
-save('dataPiso8_4.mat','data')
+save('dataSala1.mat','data')
