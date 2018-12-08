@@ -11,6 +11,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include "opencv2/video/tracking.hpp"
 #include <opencv2/aruco.hpp>
+#include <opencv2/aruco/charuco.hpp>
 
 using namespace std;
 using namespace cv;
