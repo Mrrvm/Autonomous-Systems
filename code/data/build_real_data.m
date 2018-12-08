@@ -1,5 +1,8 @@
-load('iterdatacorredorsquare.mat')
-iterdata = data; clear data;
+clear all;
+close all;
+
+load('iterdataPiso8_4.mat')
+% iterdata = data; clear data;
 
 
 % matObj = matfile('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/bags/iterdata4.mat');
@@ -8,7 +11,7 @@ iterdata = data; clear data;
 iterdataSize = size(iterdata,1);
 
 % cameraDataFile = fopen('/home/imarcher/Dropbox/Tecnico/SA/code/data/CameraData/landmark4.txt','r');
-cameraDataFile = fopen('landmarkArucosCorredor_square.txt','r');
+cameraDataFile = fopen('landmarkPiso8_4.txt','r');
 
 i = 1;
 while true
@@ -78,3 +81,4 @@ while i <= iterdataSize
     i = i + 1;
 end
 
+save('dataPiso8_4.mat','data')

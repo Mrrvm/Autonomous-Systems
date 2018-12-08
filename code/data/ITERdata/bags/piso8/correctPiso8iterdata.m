@@ -1,3 +1,6 @@
+clear all;
+close all;
+
 load('iterdata4.mat')
 
 for i = 1:size(data,1)
