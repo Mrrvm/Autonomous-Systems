@@ -9,11 +9,11 @@ function [data, robotPose, landmarkMap] = simulator()
   %Flag for default or customized landmarks-- CHANGE HERE
   Lrand = true;
   nLandmarks=15;
-  LandmarkLimits=[-5,5];
+  LandmarkLimits=[-7,7];
 
-  odomtype = 3;%0-rand;1-straigth;2-rotation;3-circle;4-square;5-triangle
-  odomSpeedLimits=[0, 3];
-  odomAngleLimits=[0, 360];
+  odomtype = 6;%0-rand;1-straigth;2-rotation;3-circle;4-square;5-triangle
+  odomSpeedLimits=2;
+  odomAngleLimits=pi/2;
   
   
   %measurements
@@ -37,10 +37,10 @@ function [data, robotPose, landmarkMap] = simulator()
   t_odom=0:samplingtime_odom:timelimit; %TODO fancy time
 
   if odomtype==0
-      controlSignal=[randi(odomSpeedLimits,length(t_odom),1),...
-          randi(odomAngleLimits,length(t_odom),1), ...
-          randi(odomSpeedLimits,length(t_odom),1), ...
-          randi(odomAngleLimits,length(t_odom),1), ...
+      controlSignal=[odomSpeedLimits*rand(length(t_odom),1),...
+          odomAngleLimits*rand(length(t_odom),1), ...
+          odomSpeedLimits*rand(length(t_odom),1), ...
+          odomAngleLimits*rand(length(t_odom),1), ...
           t_odom'
           ];
   elseif odomtype==1
@@ -59,13 +59,13 @@ function [data, robotPose, landmarkMap] = simulator()
       controlSignal=[repmat(ctr,[length(t_odom),1]) t_odom'];
   elseif odomtype==4
       %square
-      ctr=[0.5,0,0.5,0];
+      ctr=[0.4,0,0.2,0];
       temp=repmat(ctr,[floor(length(t_odom)/4),1]);
-      ctr1=[0.5,wrapToPi(deg2rad(90)),0.5,wrapToPi(deg2rad(90))];
+      ctr1=[0.4,wrapToPi(deg2rad(90)),0.4,wrapToPi(deg2rad(90))];
       temp1=repmat(ctr1,[floor(length(t_odom)/4),1]);
-      ctr2=[-0.5,0,-0.5,0];
+      ctr2=[-0.4,0,-0.4,0];
       temp2=repmat(ctr2,[floor(length(t_odom)/4),1]);
-      ctr3=[-0.5,wrapToPi(deg2rad(90)),-0.5,wrapToPi(deg2rad(90))];
+      ctr3=[-0.4,wrapToPi(deg2rad(90)),-0.4,wrapToPi(deg2rad(90))];
       temp3=repmat(ctr3,[floor(length(t_odom)/4),1]);
       aux=[temp; temp1; temp2; temp3];
       temp4=repmat(ctr,[length(t_odom)-size(aux,1),1]);
@@ -81,6 +81,25 @@ function [data, robotPose, landmarkMap] = simulator()
       aux=[temp; temp1; temp2];
       temp4=repmat(ctr,[length(t_odom)-size(aux,1),1]);
       controlSignal=[[aux; temp4] t_odom'];
+elseif odomtype==6
+      %weird squares
+      ctr=[0.2,0,0.2,0];
+      temp=repmat(ctr,[floor(length(t_odom)/4),1]);
+      ctr1=[0.4,wrapToPi(deg2rad(90)),0.4,wrapToPi(deg2rad(90))];
+      temp1=repmat(ctr1,[floor(length(t_odom)/4),1]);
+      ctr2=[-0.4,0,-0.4,0];
+      temp2=repmat(ctr2,[floor(length(t_odom)/4),1]);
+      ctr3=[-0.4,wrapToPi(deg2rad(90)),-0.4,wrapToPi(deg2rad(90))];
+      temp3=repmat(ctr3,[floor(length(t_odom)/4),1]);
+      aux=[temp; temp1; temp2; temp3];
+            
+      timelimit=100;
+      aux= [aux; aux];
+      t_odom=0:samplingtime_odom:timelimit;
+      
+      temp4=repmat(ctr,[length(t_odom)-size(aux,1),1]);
+      controlSignal=[[aux; temp4] t_odom'];
+
   end
 
   %%

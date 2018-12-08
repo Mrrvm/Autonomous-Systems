@@ -1,6 +1,6 @@
 clear;
 % load(fullfile('90degturn_50rpm','iterdata3.mat'));
-load('iterdatacorredorsquare.mat')
+load('../iterdatacorredorsquare.mat')
 
 %%
 nTimestamps = length(data);
