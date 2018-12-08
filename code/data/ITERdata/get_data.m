@@ -23,7 +23,7 @@ Angle1 = 0;
 Angle2 = 0;
 
 c = clock;
-data = struct('timestamp', (c(4)*60 + c(5))*60 + c(6),'odom', zeros(1,4));
+iterdata = struct('timestamp', (c(4)*60 + c(5))*60 + c(6),'odom', zeros(1,4));
 
 while loopFlag
     if loopFlag == false
@@ -40,7 +40,7 @@ while loopFlag
         fwAngle = double(fwAngle)*pi/180;
         bwAngle = double(bwAngle)*pi/180;
         c = clock;
-        data = [data; struct('timestamp', (c(4)*60 + c(5))*60 + c(6),'odom', [fwSpeed fwAngle bwSpeed bwAngle])];
+        iterdata = [iterdata; struct('timestamp', (c(4)*60 + c(5))*60 + c(6),'odom', [fwSpeed fwAngle bwSpeed bwAngle])];
                     
     end
     
@@ -48,7 +48,7 @@ while loopFlag
 end
 
 
-save('iterdata.mat', 'data');
+save('iterdata.mat', 'iterdata');
 
 close all;
 CASK_CloseComm();

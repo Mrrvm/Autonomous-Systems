@@ -1,7 +1,7 @@
 clear all;
 close all;
 
-load('iterdataPiso8_4.mat')
+load('iterdataSala1.mat')
 % iterdata = data; clear data;
 
 
