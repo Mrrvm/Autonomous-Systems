@@ -24,7 +24,7 @@ if sim
 
 else
     % Draw groundtruth
-    load('data/dataSala1.mat');
+    load('dataSala1.mat');
 end
 
 %% Static Variables
@@ -46,7 +46,7 @@ stateCov = zeros(3,3);
 %StateCov(2,2) = 0.1;
 %TODO --> Avoid overwrite before matching step
 
-q = [0.1;0.03];
+q = [0.05;0.0175];
 lQ = diag(q.^2); % Landmark noise
 
 Jr = zeros(2,3);
@@ -210,17 +210,17 @@ for t = 1:nTimestamps
     el = [stateMean(1); stateMean(2)];
     EL = stateCov(1:2, 1:2);
     [X,Y] = cov2elli(el,EL,3,16);
-    set(relipG, 'xdata', Y, 'ydata', X);
+    set(relipG, 'xdata', X, 'ydata', Y);
     lids = nLandmarksCurrent;
     if lids > 0
         for lid = 1:lids
             lx = stateMean(3+(lid*2)-1,1);  %landmarks x coordinate
             ly = stateMean(3+lid*2,1);  %landmarks y coordinate
-            set(lG(lid), 'xdata', ly, 'ydata', lx);
+            set(lG(lid), 'xdata', lx, 'ydata', ly);
             el = [stateMean(3+(lid*2)-1,1); stateMean(3+(lid*2),1)];
             EL = stateCov([3+(lid*2)-1 3+(lid*2)],[3+(lid*2)-1 3+(lid*2)]);
             [X,Y] = cov2elli(el,EL,3,16);
-            set(eG(lid), 'xdata', Y, 'ydata', X);
+            set(eG(lid), 'xdata', X, 'ydata', Y);
         end
     end
     estPose(t,1) = stateMean(1,1);
@@ -244,8 +244,8 @@ ReGtotal = line(...
         'linestyle','-',...
         'marker','none',...
         'color','b',...
-        'xdata',estPose(:,2),...
-        'ydata',estPose(:,1));
+        'xdata',estPose(:,1),...
+        'ydata',estPose(:,2));
 
 % Draw estimated landmarks
 for i=1:nLandmarksCurrent
@@ -254,6 +254,6 @@ for i=1:nLandmarksCurrent
     'linestyle','none',...
     'marker','+',...
     'color','r',...
-    'xdata',stateMean(3+2*i),...
-    'ydata',stateMean(3+2*i-1));
+    'xdata',stateMean(3+2*i-1),...
+    'ydata',stateMean(3+2*i));
 end
