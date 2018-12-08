@@ -35,10 +35,12 @@ while loopFlag
    
     if status == 0 && abs(fwSpeed) < (maxSpeed + speedThresh) && abs(bwSpeed) < (maxSpeed + speedThresh)
         
-        fwSpeed = (double(fwSpeed)*2*pi*wheelDiameter)/60;
-        bwSpeed = (double(bwSpeed)*2*pi*wheelDiameter)/60;
+        fwSpeed = (double(fwSpeed)*pi*wheelDiameter)/60;
+        bwSpeed = (double(bwSpeed)*pi*wheelDiameter)/60;
+        fwAngle = double(fwAngle)*pi/180;
+        bwAngle = double(bwAngle)*pi/180;
         c = clock;
-        data = [data; struct('timestamp', (c(4)*60 + c(5))*60 + c(6),'odom', [fwSpeed double(fwAngle) bwSpeed double(bwAngle)])];
+        data = [data; struct('timestamp', (c(4)*60 + c(5))*60 + c(6),'odom', [fwSpeed fwAngle bwSpeed bwAngle])];
                     
     end
     

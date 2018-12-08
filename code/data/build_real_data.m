@@ -1,11 +1,17 @@
-load('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/bags/iterdata4.mat');
-iterdata = data; clear data;
-matObj = matfile('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/bags/iterdata4.mat');
-details = whos(matObj);
-aux = details.size;
-iterdataSize = aux(1);
+clear all;
+close all;
 
-cameraDataFile = fopen('/home/imarcher/Dropbox/Tecnico/SA/code/data/CameraData/landmark4.txt','r');
+load('iterdataPiso8_4.mat')
+% iterdata = data; clear data;
+
+
+% matObj = matfile('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/bags/iterdata4.mat');
+% details = whos(matObj);
+% aux = details.size;
+iterdataSize = size(iterdata,1);
+
+% cameraDataFile = fopen('/home/imarcher/Dropbox/Tecnico/SA/code/data/CameraData/landmark4.txt','r');
+cameraDataFile = fopen('landmarkPiso8_4.txt','r');
 
 i = 1;
 while true
@@ -75,13 +81,4 @@ while i <= iterdataSize
     i = i + 1;
 end
 
-k = 1;
-while k <= size(data,2)
-    if data(k).option == 0
-        data(k).odom(2) = pi*data(k).odom(2)/180;
-        data(k).odom(4) = pi*data(k).odom(4)/180;
-    end
-    k = k + 1;
-end
-
-
+save('dataPiso8_4.mat','data')
