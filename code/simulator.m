@@ -11,7 +11,7 @@ function [data, robotPose, landmarkMap] = simulator()
   nLandmarks=15;
   LandmarkLimits=[-7,7];
 
-  odomtype = 3;%0-rand;1-straigth;2-rotation;3-circle;4-square;5-triangle
+  odomtype = 6;%0-rand;1-straigth;2-rotation;3-circle;4-square;5-triangle
   odomSpeedLimits=2;
   odomAngleLimits=pi/2;
   

@@ -1,6 +1,6 @@
 clear all;
 close all;
-sim = 1;
+sim = 0;
 
 if sim
     [data, robotPose, landmarkMap] = simulator();
@@ -24,7 +24,7 @@ if sim
 
 else
     % Draw groundtruth
-    load('data.mat');
+    load('data/data2.mat');
 end
 
 %% Static Variables
@@ -32,13 +32,16 @@ nTimestamps = length(data);
 ReG = zeros(1, nTimestamps);
 nLandmarksTotal = 15;
 wheeldistance = 0.21;
-rNoise = [0.05; 0.0175; 0.05; 0.0175];
+%rNoise = [0.1; 0.03; 0.1; 0.03];
+rNoise = [0.2; 0.1; 0.2; 0.1];
 Rn = diag(rNoise.^2);   %probably wrong
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Dynamic Variables
 stateMean = zeros(3, 1);
+%stateMean(2) = 0.5; 
 stateCov = zeros(3,3);
+%StateCov(2,2) = 0.1;
 %TODO --> Avoid overwrite before matching step
 
 q = [0.1;0.0175];
@@ -78,12 +81,14 @@ if sim
         'color', 'r', ...
         'xdata', robotPose(1,1), ...
         'ydata', robotPose(1,2));
-end
-rG = line('parent',gca, ...     %estimator robot
+    
+    rG = line('parent',gca, ...     %estimator robot
     'marker', '*', ...
     'color', 'b', ...
     'xdata', robotPose(1,1), ...
     'ydata', robotPose(1,2));
+end
+
 
 relipG = line('parent',gca, ...     %estimator robot elipses
     'color', 'b', ...
@@ -128,13 +133,13 @@ for t = 1:nTimestamps
     end
     
     %%%
-    couve = ...
-        movement_model(stateMean(1:3)', [last_odom last_time], noise, data(t).time, ...
-        wheeldistance, nLandmarksCurrent, Rn);
-    errorc(t)=norm(abs(couve(1:2))-abs(robotPose(floor(t/2)+rem(t,2),1:2)))^2;
-    if errorc(t)>2
-        disp('here couve')
-    end
+%    couve = ...
+%        movement_model(stateMean(1:3)', [last_odom last_time], noise, data(t).time, ...
+%        wheeldistance, nLandmarksCurrent, Rn);
+%    errorc(t)=norm(abs(couve(1:2))-abs(robotPose(floor(t/2)+rem(t,2),1:2)))^2;
+%    if errorc(t)>2
+%        disp('here couve')
+%    end
     %%%%
     
     tic
@@ -170,12 +175,13 @@ for t = 1:nTimestamps
                 [z, H] = observation_model(stateMean(1:3), ...
                     [stateMean(3+location*2-1) stateMean(3+location*2)], ...
                     location, nLandmarksCurrent); % Get z = [landmarkDist, landmarkAngle] and jacobian
-                 K = (stateCov*(H'))/(H*stateCov*(H')+lQ);
-                 if ([landmarkRaw(3) landmarkRaw(2)]' - z')<3
+            
+                if ([landmarkRaw(3) landmarkRaw(2)] - z)<3
+                    K = (stateCov*(H'))/(H*stateCov*(H')+lQ);
                     stateMean = stateMean + K*([landmarkRaw(3) landmarkRaw(2)]' - z');
-                     aux = K*H;
-                     stateCov = (eye(size(aux))-aux)*stateCov;
-                 end
+                    aux = K*H;
+                    stateCov = (eye(size(aux))-aux)*stateCov;
+                end
             end
         end
     else
@@ -184,19 +190,19 @@ for t = 1:nTimestamps
     end
     runtime(t)=toc;
     
-    error(t)=norm(abs(stateMean(1:2)')-abs(robotPose(floor(t/2)+rem(t,2),1:2)))^2;
+    %error(t)=norm(abs(stateMean(1:2)')-abs(robotPose(floor(t/2)+rem(t,2),1:2)))^2;
     %%%%
-    if error(t)>2
-        disp('here')
-    end
+    %if error(t)>2
+    %    disp('here')
+    %end
     %%%%
     
     %   3. Graphics
     if sim
         set(RG, 'xdata', robotPose(index,1), ...
             'ydata', robotPose(index,2)); %simulator robot
+        set(rG, 'xdata', stateMean(1), 'ydata', stateMean(2)); %estimator robot
     end
-    set(rG, 'xdata', stateMean(1), 'ydata', stateMean(2)); %estimator robot
     el = [stateMean(1); stateMean(2)];
     EL = stateCov(1:2, 1:2);
     [X,Y] = cov2elli(el,EL,3,16);
@@ -216,7 +222,7 @@ for t = 1:nTimestamps
     estPose(t,1) = stateMean(1,1);
     estPose(t,2) = stateMean(2,1);
     drawnow;
-    pause(0.1);
+    %pause(0.1);
 end
 
 %Error calculations
