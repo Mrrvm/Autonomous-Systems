@@ -4,7 +4,7 @@
 #include <sstream>
 
 #define N_SAMPLES 102
-#define SAMPLES_DIR "../../../../../../arucos/ArucosSala2/*.jpg"  
+#define SAMPLES_DIR "../../../../../../arucos/ArucosSala3/*.jpg"  
 #define MarkersSide 0.15 //15 cm
 #define WIDTH 2056
 #define HEIGHT 1542
@@ -30,7 +30,7 @@ string FileName(const string& str) {
 
 int main(int argc, char const *argv[]) {
 
-    ofstream outfile ("landmarkSala2.txt");
+    ofstream outfile ("landmarkSala3.txt");
 
     cv::String path(SAMPLES_DIR);
     vector<cv::String> fn;

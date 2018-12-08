@@ -13,7 +13,7 @@
 #define HEIGHT 1542
 #define WIDTH 2056
 #define BITSPIXEL 32
-#define PATH "/home/imarcher/arucos/ArucosSala2/"
+#define PATH "/home/imarcher/arucos/ArucosSala3/"
 
 
 void spawn_error(int cameraHandle, std::string where) {
