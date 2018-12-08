@@ -3,12 +3,14 @@
 #include <fstream> 
 #include <sstream>
 
-#define N_SAMPLES 810
-#define SAMPLES_DIR "../../../../../../arucos/SA_arucos2/*.jpg"  
+#define N_SAMPLES 102
+#define SAMPLES_DIR "../../../../../../arucos/ArucosSala1/*.jpg"  
 #define MarkersSide 0.15 //15 cm
+#define WIDTH 2056
+#define HEIGHT 1542
 
 void GetCalibration(Mat& intrinsics, Mat& distCoeffs) {
-    FileStorage fs("intrinsics.xml", FileStorage::READ);
+    FileStorage fs("calib.xml", FileStorage::READ);
     if (fs.isOpened()) {
       fs["intrinsics"] >> intrinsics;
       fs["distCoeffs"] >> distCoeffs;
@@ -28,7 +30,7 @@ string FileName(const string& str) {
 
 int main(int argc, char const *argv[]) {
 
-    ofstream outfile ("landmark.txt");
+    ofstream outfile ("landmarkSala1.txt");
 
     cv::String path(SAMPLES_DIR);
     vector<cv::String> fn;
@@ -49,7 +51,7 @@ int main(int argc, char const *argv[]) {
     double distance;
     Mat rMatrix;
     Mat tvecsCam;
-    
+
     int i = 0, j = 0;
     while(i < N_SAMPLES) {
         
@@ -79,14 +81,15 @@ int main(int argc, char const *argv[]) {
 
                 cout << "Landmark[" << j << "]:" << endl;
                                 
+                //cout << "Translation vector in aruco's ref: " << endl << tvecs[j] << endl;
+
                 cv::Rodrigues(rvecs[j], rMatrix);
                 tvecsCam = -rMatrix.t()*Mat(tvecs[j]);
-
                 cout << "Translation vector: " << endl << tvecsCam << endl;
-
-                double z = tvecsCam.at<double>(2);
-                double x = tvecsCam.at<double>(0);
                 
+                double z = tvecsCam.at<double>(2);
+				double x = tvecsCam.at<double>(0);
+
                 // Computation of distance to aruco through sqrt(a^2 + b^2)
                 distance = sqrt(z*z + x*x);
                 teta = atan2(x,z);
@@ -94,7 +97,7 @@ int main(int argc, char const *argv[]) {
                 outfile << markerIds[j] << " " << teta << " " << distance << " ";
                 cout << "[id teta distance]" << endl << "[" << markerIds[j] << " " << teta << " " << distance << "] " << endl;
 
-                //cv::aruco::drawAxis(inputImage, intrinsics, distCoeffs, rvecs[i], tvecs[i], 0.1);
+                //cv::aruco::drawAxis(inputImage, intrinsics, distCoeffs, rvecs[j], tvecs[j], 0.1);
                 //cv::imshow("OutputImage", inputImage);
                 //waitKey(0);
 
