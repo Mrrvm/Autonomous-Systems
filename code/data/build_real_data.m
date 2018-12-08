@@ -1,4 +1,5 @@
-load('iterdatacorredorsquare.mat')
+clear;
+load('iterdataElevador2.mat')
 iterdata = data; clear data;
 
 
@@ -8,7 +9,7 @@ iterdata = data; clear data;
 iterdataSize = size(iterdata,1);
 
 % cameraDataFile = fopen('/home/imarcher/Dropbox/Tecnico/SA/code/data/CameraData/landmark4.txt','r');
-cameraDataFile = fopen('landmarkArucosCorredor_square.txt','r');
+cameraDataFile = fopen('landmarkElevador2.txt','r');
 
 i = 1;
 while true

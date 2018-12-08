@@ -24,7 +24,7 @@ if sim
 
 else
     % Draw groundtruth
-    load('dataCorredorSquare.mat');
+    load('dataElevador2akaLine.mat');
 end
 
 %% Static Variables
