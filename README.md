@@ -39,5 +39,5 @@ The camera was calibrated using [arUco boards](https://docs.opencv.org/3.1.0/da/
 
 ## Acknowledgements
 
-For once, we thank Microsoft Windows for being the only SO to connect to ITER.
+For once, we thank Microsoft Windows for being the only OS to connect to ITER.
 
