@@ -11,7 +11,7 @@ The project was developed for the Autonomous Systems course in [Instituto Superi
 We provide a simulator as well as real datasets.
 The [real datasets](https://github.com/Mrrvm/SA/tree/master/code/data) include [odometry](https://github.com/Mrrvm/SA/tree/master/code/data/ITERdata) from the ITER prototype at a 100ms rate, [images of visual markers](https://github.com/Mrrvm/SA/tree/master/code/data/CameraData/dataset_images) taken at 1s rate, respective [.txt files](https://github.com/Mrrvm/SA/tree/master/code/data/CameraData) containing the [timestamp id bearring and range] of the markers to the robot and functions to concatenate this data.
 
-To run the algorithm, define `sim` as 0 or 1, to use real or simulated data, respectively. If it's real data, load the respective data file from the data/ directory. Get some popcorn and watch the almost reasonable results.
+To run the algorithm use the file [ekf_slam.m](https://github.com/Mrrvm/SA/blob/master/code/ekf_slam.m) and define `sim` as 0 or 1, to use real or simulated data, respectively. If it's real data, load the respective data file from the data/ directory. Get some popcorn and watch the almost reasonable results.
 
 ## Materials and Libraries
 
