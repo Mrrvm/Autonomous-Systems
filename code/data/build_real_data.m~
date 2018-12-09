@@ -13,20 +13,16 @@ if runall
     end
     size = size(fileList,1);
 else
-    torun(1) = 'Sala1';
+    torun = 'Corredor';
+    
     size = 1;
 end
     
-for i=1:size
-    load(strcat(PATH,'ITERdata/','iterdata',string(torun(i)),'.mat'));
+for x=1:size
+    load(strcat(PATH,'ITERdata/','iterdata',string(torun(x)),'.mat'));
+    iterdataSize = length(iterdata);
 
-    % matObj = matfile('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/bags/iterdata4.mat');
-    % details = whos(matObj);
-    % aux = details.size;
-    iterdataSize = size(iterdata,1);
-
-    % cameraDataFile = fopen('/home/imarcher/Dropbox/Tecnico/SA/code/data/CameraData/landmark4.txt','r');
-    cameraDataFile = fopen(strcat(PATH,'CameraData/','iterdata',string(torun(i)),'.mat')'landmarkElevador2.txt','r');
+    cameraDataFile = fopen(strcat(PATH,'CameraData/','landmark',string(torun()),'.txt')','r');
 
     i = 1;
     while true
@@ -96,6 +92,6 @@ for i=1:size
         i = i + 1;
     end
 
-    save('dataElevador2akaLine.mat','data')
+    save(strcat(PATH,'data',string(torun(x,:)),'.mat'), 'data');
 
 end
