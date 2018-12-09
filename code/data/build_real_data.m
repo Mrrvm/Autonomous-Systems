@@ -19,10 +19,6 @@ end
     
 for x=1:size
     load(strcat(PATH,'ITERdata/','iterdata',string(torun(x)),'.mat'));
-
-    % matObj = matfile('/home/imarcher/Dropbox/Tecnico/SA/code/data/ITERdata/bags/iterdata4.mat');
-    % details = whos(matObj);
-    % aux = details.size;
     iterdataSize = length(iterdata);
 
     cameraDataFile = fopen(strcat(PATH,'CameraData/','landmark',string(torun(x)),'.txt')','r');

@@ -10,7 +10,7 @@
 #define HEIGHT 1542
 
 void GetCalibration(Mat& intrinsics, Mat& distCoeffs) {
-    FileStorage fs("calib.xml", FileStorage::READ);
+    FileStorage fs("calib_arucoboard.xml", FileStorage::READ);
     if (fs.isOpened()) {
       fs["intrinsics"] >> intrinsics;
       fs["distCoeffs"] >> distCoeffs;
