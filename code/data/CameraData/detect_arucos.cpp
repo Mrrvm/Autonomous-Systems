@@ -3,8 +3,8 @@
 #include <fstream> 
 #include <sstream>
 
-#define N_SAMPLES 102
-#define SAMPLES_DIR "../../../../../../arucos/ArucosSala3/*.jpg"  
+#define N_SAMPLES 352
+#define SAMPLES_DIR "../../../../../../arucos/ArucosGT4/*.jpg"  
 #define MarkersSide 0.15 //15 cm
 #define WIDTH 2056
 #define HEIGHT 1542
@@ -30,7 +30,7 @@ string FileName(const string& str) {
 
 int main(int argc, char const *argv[]) {
 
-    ofstream outfile ("landmarkSala3.txt");
+    ofstream outfile ("landmark4.txt");
 
     cv::String path(SAMPLES_DIR);
     vector<cv::String> fn;
@@ -57,9 +57,10 @@ int main(int argc, char const *argv[]) {
         
         timestamp = FileName(fn[i]);
 
-        undistort(imread(fn[i]), inputImage, intrinsics, distCoeffs);
+        //undistort(imread(fn[i]), inputImage, intrinsics, distCoeffs);
         //imshow("inputImage", inputImage);
         //waitKey(0);
+        inputImage = imread(fn[i]);
         
         cv::aruco::detectMarkers(inputImage, dictionary, markerCorners, markerIds);
         
@@ -75,7 +76,7 @@ int main(int argc, char const *argv[]) {
             outfile << timestamp << " " << markerIds.size() << " ";
             cout << timestamp << endl;
 
-            cv::aruco::drawDetectedMarkers(inputImage, markerCorners, markerIds);
+            //cv::aruco::drawDetectedMarkers(inputImage, markerCorners, markerIds);
             
             for(j=0; j<markerIds.size(); j++) {
 

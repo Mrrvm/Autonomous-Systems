@@ -1,2 +1,0 @@
-aruco-cam0 d88cm 
-aruco-cam0  d98cm lat33
