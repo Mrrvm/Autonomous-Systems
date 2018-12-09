@@ -24,7 +24,7 @@ if sim
 
 else
     % Draw groundtruth
-    load('dataSala1.mat');
+    load('/home/imarcher/Dropbox/Tecnico/SA/code/data/dataCorredor.mat');
 end
 
 %% Static Variables
@@ -160,6 +160,13 @@ for t = 1:nTimestamps
         if nLandmarksSeen > 0
             for i = 1:nLandmarksSeen
                 landmarkRaw = data(t).landmark(i, :); % Get [landmarkID, landmarkDist, landmarkAngle]
+                if tvev == 1
+                end
+                tvev = 0;
+                if landmarkRaw(1) == 17
+                    tvev = 1;pause();
+                end
+                
                 %lQ = [var(landmarkRaw(2)) 0; 0 var(landmarkRaw(3))];
                 if ~ismember(landmarkRaw(1), landmarkList) % If never seen before, add new Landmark
                     [landmarkXY, Jr, Jl] = ...

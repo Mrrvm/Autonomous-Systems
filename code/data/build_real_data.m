@@ -2,27 +2,25 @@ clear all;
 close all;
 
 PATH = '/home/imarcher/Dropbox/Tecnico/SA/code/data/';
-runall = 1;
 
-if runall
-    fileList = dir('/home/imarcher/Dropbox/Tecnico/SA/code/data/CameraData/*.txt');
-    for i=1:size(fileList,1)
-        [m, r] = split(fileList(i).name, 'landmark');
-        m = split(m(2), '.txt');
-        torun(i) = m(1);
-    end
-    size = size(fileList,1);
-else
-    torun(1) = 'Sala1';
-    size = 1;
+
+fileList = dir('/home/imarcher/Dropbox/Tecnico/SA/code/data/CameraData/*.txt');
+for i=1:size(fileList,1)
+    [m, r] = split(fileList(i).name, 'landmark');
+    m = split(m(2), '.txt');
+    torun(i) = m(1);
 end
+size = size(fileList,1);
+
     
 for x=1:size
     load(strcat(PATH,'ITERdata/','iterdata',string(torun(x)),'.mat'));
+    strcat(PATH,'ITERdata/','iterdata',string(torun(x)),'.mat')
     iterdataSize = length(iterdata);
 
-    cameraDataFile = fopen(strcat(PATH,'CameraData/','landmark',string(torun(x)),'.txt')','r');
-
+    cameraDataFile = fopen(strcat(PATH,'CameraData/','landmark',string(torun(x)),'.txt'),'r');
+    strcat(PATH,'CameraData/','landmark',string(torun(x)),'.txt')
+    
     i = 1;
     while true
       thisline = fgetl(cameraDataFile);
@@ -92,5 +90,6 @@ for x=1:size
     end
 
     save(strcat(PATH,'data',string(torun(x)),'.mat'), 'data');
-
+    strcat(PATH,'data',string(torun(x)),'.mat')
+    clearvars -except torun x PATH
 end
