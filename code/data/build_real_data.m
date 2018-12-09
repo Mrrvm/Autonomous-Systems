@@ -91,6 +91,6 @@ for x=1:size
         i = i + 1;
     end
 
-    save(strcat(PATH,'data',string(torun(x)),'.mat'));
+    save(strcat(PATH,'data',string(torun(x)),'.mat'), 'data');
 
 end
