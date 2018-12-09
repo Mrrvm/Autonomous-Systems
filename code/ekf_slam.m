@@ -24,7 +24,7 @@ if sim
 
 else
     % Draw groundtruth
-    load('dataSala1.mat');
+    load('dataSala3.mat');
 end
 
 %% Static Variables
