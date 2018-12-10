@@ -6,6 +6,8 @@ SLAM(Simultaneous Localisation And Mapping) with an EKF approach is one method o
 
 The project was developed for the Autonomous Systems course in [Instituto Superior Técnico](https://tecnico.ulisboa.pt/), Universidade de Lisboa.
 
+For further understanding, you may want to read the [report](https://github.com/Mrrvm/SA/blob/master/report.pdf) on this.
+
 ## Running it
 
 We provide a simulator as well as real datasets.
