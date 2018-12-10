@@ -1,9 +1,9 @@
-clear all;
-close all;
-sim = 0;
+%clear all;
+%close all;
+sim = 1;
 
 if sim
-    [data, robotPose, landmarkMap] = simulator();
+    %[data, robotPose, landmarkMap] = simulator();
     figure(1); hold on;
     title('Simulator Plot');
     % Draw simulated landmarks
@@ -24,7 +24,7 @@ if sim
 
 else
     % Draw groundtruth
-    load('dataSala1.mat');
+    %load('weirdsquares_sim.mat');
 end
 
 %% Static Variables
@@ -134,17 +134,6 @@ for t = 1:nTimestamps
         noise = zeros(4,1);
     end
 
-    %%%
-%    couve = ...
-%        movement_model(stateMean(1:3)', [last_odom last_time], noise, data(t).time, ...
-%        wheeldistance, nLandmarksCurrent, Rn);
-%    errorc(t)=norm(abs(couve(1:2))-abs(robotPose(floor(t/2)+rem(t,2),1:2)))^2;
-%    if errorc(t)>2
-%        disp('here couve')
-%    end
-    %%%%
-
-    tic
     [stateMean(1:3), rJacob, nJacob] = ...
         movement_model(stateMean(1:3)', [last_odom last_time], noise, data(t).time, ...
         wheeldistance, nLandmarksCurrent, Rn);

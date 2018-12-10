@@ -3,8 +3,8 @@
 #include <fstream> 
 #include <sstream>
 
-#define N_SAMPLES 102
-#define SAMPLES_DIR "dataset_images/ArucosSala1/*.jpg"  
+#define N_SAMPLES 1
+#define SAMPLES_DIR "test_images/1image.bmp"  
 #define MarkersSide 0.15 //15 cm
 #define WIDTH 2056
 #define HEIGHT 1542
@@ -30,7 +30,7 @@ string FileName(const string& str) {
 
 int main(int argc, char const *argv[]) {
 
-    ofstream outfile ("landmarkSala1.txt");
+    ofstream outfile ("landmark.txt");
 
     cv::String path(SAMPLES_DIR);
     vector<cv::String> fn;
@@ -109,9 +109,10 @@ int main(int argc, char const *argv[]) {
 	                outfile << markerIds[j] << " " << teta << " " << distance << " ";
 	                cout << "[id teta distance]" << endl << "[" << markerIds[j] << " " << teta << " " << distance << "] " << endl;
 
-	                //cv::aruco::drawAxis(inputImage, intrinsics, distCoeffs, rvecs[j], tvecs[j], 0.1);
-	                //cv::imshow("OutputImage", inputImage);
-	                //waitKey(0);
+	                cv::aruco::drawAxis(inputImage, intrinsics, distCoeffs, rvecs[j], tvecs[j], 0.1);
+	                cv::imshow("OutputImage", inputImage);
+	                imwrite("OutputImage.png", inputImage);
+	                waitKey(0);
 
 	                rMatrix.release();
 	                tvecsCam.release();
